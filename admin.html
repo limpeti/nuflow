@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NuFlow Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="_ds/modernist-156e465f-c4f1-439f-91ef-caf9a1ccda8e/styles.css">
+<script src="_ds/modernist-156e465f-c4f1-439f-91ef-caf9a1ccda8e/_ds_bundle.js"></script>
+<style>
+body { margin: 0; background: var(--color-neutral-100); color: var(--color-text); font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+a:hover { color: #ec3013; }
+button, input, textarea, select { font-family: inherit; color: inherit; }
+input:focus, textarea:focus, select:focus { outline: none; border-color: #ec3013 !important; }
+button:focus-visible, a:focus-visible, label:focus-within { outline: 2px solid #ec3013; outline-offset: 2px; }
+</style>
+</helmet>
+<div style="min-height: 100vh; display: flex; flex-direction: column;">
+
+  <header style="position: sticky; top: 0; z-index: 40; background: #fff; border-bottom: 2px solid var(--color-text);">
+    <div style="max-width: 1400px; margin: 0 auto; padding: 0 clamp(16px, 3vw, 32px); min-height: 72px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+      <a href="index.html" style="display: flex; align-items: center; gap: 12px;" aria-label="NuFlow oldal">
+        <img src="assets/nuflow-logo-v2.png" alt="NuFlow" style="display: block; height: 34px; width: auto;">
+        <span style="background: #000; color: #fff; font-family: var(--font-heading); font-weight: 800; font-size: 12px; letter-spacing: 0.12em; text-transform: uppercase; padding: 5px 8px;">Admin</span>
+      </a>
+      <div style="display: flex; align-items: center; gap: 10px; margin-left: auto; flex-wrap: wrap; padding: 12px 0;">
+        <a href="index.html" style="height: 44px; padding: 0 16px; display: flex; align-items: center; gap: 8px; border: 2px solid var(--color-text); background: #fff; font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;" style-hover="background: var(--color-neutral-200);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"></path></svg>
+          Oldal
+        </a>
+        <label style="height: 44px; padding: 0 16px; display: flex; align-items: center; gap: 8px; border: 2px solid var(--color-text); background: #fff; font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; box-sizing: border-box;" style-hover="background: var(--color-neutral-200);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="M12 20V8M6 14l6-6 6 6M4 4h16"></path></svg>
+          Importálás
+          <input type="file" accept=".json,application/json" onChange="{{ importJson }}" style="display: none;">
+        </label>
+        <button type="button" onClick="{{ exportJson }}" style="height: 44px; padding: 0 16px; display: flex; align-items: center; gap: 8px; border: 2px solid #000; background: #000; color: #fff; font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;" style-hover="background: #333;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="M12 4v12M6 10l6 6 6-6M4 20h16"></path></svg>
+          Exportálás
+        </button>
+        <button type="button" onClick="{{ newPost }}" style="height: 44px; padding: 0 18px; display: flex; align-items: center; gap: 8px; border: 2px solid #ec3013; background: #ec3013; color: #fff; font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;" style-hover="background: #c92408; border-color: #c92408;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"><path d="M12 5v14M5 12h14"></path></svg>
+          Új poszt
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <sc-if value="{{ isDraftSrc }}" hint-placeholder-val="{{ false }}">
+    <div style="background: #000; color: #fff;">
+      <div style="max-width: 1400px; margin: 0 auto; padding: 10px clamp(16px, 3vw, 32px); display: flex; align-items: center; gap: 12px; flex-wrap: wrap; font-size: 14px;">
+        <span style="width: 8px; height: 8px; border-radius: 50%; background: #ec3013; flex: none;"></span>
+        <span style="flex: 1; min-width: 240px;">A változások ebben a böngészőben vannak mentve. Élesítéshez exportáld a <strong>posts.json</strong> fájlt, és töltsd fel a tárhelyre.</span>
+        <button type="button" onClick="{{ resetDraft }}" style="border: 0; background: transparent; color: #fff; font-weight: 700; font-size: 13px; text-decoration: underline; cursor: pointer; padding: 4px 0;">Visszaállítás a posts.json-ra</button>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ isLocalEmpty }}" hint-placeholder-val="{{ false }}">
+    <div style="background: #ec3013; color: #fff;">
+      <div style="max-width: 1400px; margin: 0 auto; padding: 10px clamp(16px, 3vw, 32px); font-size: 14px; line-height: 1.5;">A gépedről megnyitva a böngésző nem engedi automatikusan betölteni a <strong>posts.json</strong>-t. Kattints az <strong>Importálás</strong> gombra, és válaszd ki a mappában lévő posts.json fájlt. Utána minden működik.</div>
+    </div>
+  </sc-if>
+
+  <div style="flex: 1; width: 100%; max-width: 1400px; margin: 0 auto; padding: 24px clamp(16px, 3vw, 32px) 64px; box-sizing: border-box; display: grid; grid-template-columns: {{ cols }}; gap: 24px; align-items: start;">
+
+    <sc-if value="{{ showList }}" hint-placeholder-val="{{ true }}">
+      <aside style="display: flex; flex-direction: column; gap: 16px; min-width: 0; position: {{ listPos }}; top: 96px;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; gap: 12px;">
+          <h1 style="margin: 0; font-family: var(--font-heading); font-weight: 900; font-size: 32px; letter-spacing: -0.03em; text-transform: uppercase;">Posztok</h1>
+          <span style="font-size: 13px; font-weight: 600; color: var(--color-neutral-700); white-space: nowrap;">{{ countLabel }}</span>
+        </div>
+        <input value="{{ q }}" onChange="{{ onQ }}" placeholder="Keresés cím alapján…" style="height: 44px; border: 2px solid var(--color-text); background: #fff; padding: 0 14px; font-size: 15px; box-sizing: border-box; width: 100%;">
+        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+          <sc-for list="{{ cats }}" as="c" hint-placeholder-count="5">
+            <button type="button" onClick="{{ c.onClick }}" style="height: 32px; padding: 0 12px; border: 2px solid var(--color-text); background: {{ c.bg }}; color: {{ c.fg }}; font-family: var(--font-heading); font-weight: 800; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;">{{ c.l }}</button>
+          </sc-for>
+        </div>
+        <div style="display: flex; flex-direction: column; background: #fff; border: 2px solid var(--color-text); max-height: {{ listMaxH }}; overflow-y: auto;">
+          <sc-for list="{{ items }}" as="it" hint-placeholder-count="6">
+            <button type="button" onClick="{{ it.onClick }}" style="display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; align-items: start; width: 100%; text-align: left; padding: 12px; border: 0; border-top: {{ it.border }}; border-left: 4px solid {{ it.mark }}; background: {{ it.bg }}; cursor: pointer;" style-hover="background: var(--color-neutral-100);">
+              <div style="position: relative; aspect-ratio: 1 / 1; background: var(--color-neutral-200); overflow: hidden;">
+                <sc-if value="{{ it.hasImg }}" hint-placeholder-val="{{ false }}">{{ it.imgEl }}</sc-if>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+                <span style="align-self: flex-start; background: {{ it.cbg }}; color: {{ it.cfg }}; font-family: var(--font-heading); font-weight: 800; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; padding: 3px 6px;">{{ it.label }}</span>
+                <span style="font-family: var(--font-heading); font-weight: 800; font-size: 15px; line-height: 1.2; letter-spacing: -0.01em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ it.title }}</span>
+                <span style="font-size: 12px; font-weight: 600; color: var(--color-neutral-700);">{{ it.date }}</span>
+              </div>
+            </button>
+          </sc-for>
+          <sc-if value="{{ noItems }}" hint-placeholder-val="{{ false }}">
+            <div style="padding: 24px 16px; font-size: 14px; color: var(--color-neutral-700);">Nincs találat.</div>
+          </sc-if>
+        </div>
+      </aside>
+    </sc-if>
+
+    <sc-if value="{{ showEmpty }}" hint-placeholder-val="{{ false }}">
+      <div style="min-height: 360px; border: 2px dashed var(--color-neutral-400); display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 16px; padding: 40px;">
+        <h2 style="margin: 0; font-family: var(--font-heading); font-weight: 900; font-size: clamp(26px, 3vw, 38px); line-height: 1.05; letter-spacing: -0.03em; max-width: 18ch; text-wrap: balance;">Válassz egy posztot a listából, vagy írj újat.</h2>
+        <button type="button" onClick="{{ newPost }}" style="height: 44px; padding: 0 18px; border: 2px solid #000; background: #000; color: #fff; font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;">Új poszt</button>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showEditor }}" hint-placeholder-val="{{ false }}">
+      <section style="display: flex; flex-direction: column; gap: 24px; min-width: 0; background: #fff; border: 2px solid var(--color-text); padding: clamp(16px, 3vw, 32px);">
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+            <button type="button" onClick="{{ closeEditor }}" aria-label="Vissza a listához" style="width: 44px; height: 44px; border: 2px solid var(--color-text); background: #fff; display: grid; place-items: center; cursor: pointer; padding: 0;">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>
+            </button>
+          </sc-if>
+          <div style="display: flex; flex-direction: column; gap: 4px; flex: 1; min-width: 200px;">
+            <h2 style="margin: 0; font-family: var(--font-heading); font-weight: 900; font-size: 28px; letter-spacing: -0.03em; text-transform: uppercase;">{{ editorTitle }}</h2>
+            <span style="font-size: 13px; font-weight: 700; color: {{ statusColor }};">{{ statusText }}</span>
+          </div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            <sc-if value="{{ canView }}" hint-placeholder-val="{{ false }}">
+              <a href="{{ viewHref }}" style="height: 44px; padding: 0 14px; display: flex; align-items: center; border: 2px solid var(--color-text); background: #fff; font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;" style-hover="background: var(--color-neutral-200);">Megnézem</a>
+            </sc-if>
+            <button type="button" onClick="{{ remove }}" style="height: 44px; padding: 0 14px; border: 2px solid #ec3013; background: #fff; color: #c92408; font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;" style-hover="background: #fdeae6;">Törlés</button>
+            <button type="button" onClick="{{ cancel }}" style="height: 44px; padding: 0 14px; border: 2px solid var(--color-text); background: #fff; font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;" style-hover="background: var(--color-neutral-200);">Mégse</button>
+            <button type="button" onClick="{{ save }}" style="height: 44px; padding: 0 20px; border: 2px solid #000; background: #000; color: #fff; font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;" style-hover="background: #333;">Mentés</button>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px;">
+          <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-neutral-700);">Kategória</span>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <sc-for list="{{ groupOpts }}" as="g" hint-placeholder-count="4">
+              <button type="button" onClick="{{ g.onClick }}" style="height: 40px; padding: 0 16px; border: 2px solid {{ g.border }}; background: {{ g.bg }}; color: {{ g.fg }}; font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;">{{ g.l }}</button>
+            </sc-for>
+          </div>
+          <sc-if value="{{ hasSubs }}" hint-placeholder-val="{{ true }}">
+            <div style="display: flex; gap: 6px; flex-wrap: wrap; padding-top: 4px;">
+              <sc-for list="{{ subOpts }}" as="o" hint-placeholder-count="4">
+                <button type="button" onClick="{{ o.onClick }}" style="height: 34px; padding: 0 12px; border: 2px solid {{ o.border }}; background: {{ o.bg }}; color: {{ o.fg }}; font-weight: 700; font-size: 13px; cursor: pointer;">{{ o.l }}</button>
+              </sc-for>
+            </div>
+          </sc-if>
+        </div>
+
+        <div style="display: grid; grid-template-columns: {{ metaCols }}; gap: 16px;">
+          <label style="display: flex; flex-direction: column; gap: 8px; min-width: 0;">
+            <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-neutral-700);">Cím</span>
+            <input value="{{ d.title }}" onChange="{{ onTitle }}" placeholder="A poszt címe" style="height: 52px; border: 2px solid var(--color-text); background: #fff; padding: 0 14px; font-family: var(--font-heading); font-weight: 800; font-size: 20px; letter-spacing: -0.01em; box-sizing: border-box; width: 100%;">
+          </label>
+          <label style="display: flex; flex-direction: column; gap: 8px; min-width: 0;">
+            <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-neutral-700);">Dátum</span>
+            <input type="date" value="{{ d.date }}" onChange="{{ onDate }}" style="height: 52px; border: 2px solid var(--color-text); background: #fff; padding: 0 14px; font-size: 16px; box-sizing: border-box; width: 100%;">
+          </label>
+        </div>
+
+        <label style="display: flex; flex-direction: column; gap: 8px;">
+          <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-neutral-700);">Bevezető (lead)</span>
+          <textarea value="{{ d.lead }}" onChange="{{ onLead }}" rows="3" placeholder="1–2 mondat, ez látszik a kártyákon" style="border: 2px solid var(--color-text); background: #fff; padding: 12px 14px; font-size: 16px; line-height: 1.5; resize: vertical; box-sizing: border-box; width: 100%;"></textarea>
+        </label>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-neutral-700);">Fejléc kép</span>
+          <div style="display: grid; grid-template-columns: {{ imgCols }}; gap: 16px; align-items: start;">
+            <div onDrop="{{ onHeroDrop }}" onDragOver="{{ allowDrop }}" style="position: relative; aspect-ratio: 16 / 10; width: 100%; background: var(--color-neutral-100); border: 2px dashed var(--color-neutral-400); overflow: hidden; display: grid; place-items: center;">
+              <sc-if value="{{ heroHas }}" hint-placeholder-val="{{ false }}">{{ heroImgEl }}</sc-if>
+              <sc-if value="{{ heroNone }}" hint-placeholder-val="{{ true }}"><span style="font-size: 14px; font-weight: 600; color: var(--color-neutral-700); padding: 16px; text-align: center;">Húzd ide a képet</span></sc-if>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0;">
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <label style="height: 40px; padding: 0 14px; display: flex; align-items: center; border: 2px solid #000; background: #000; color: #fff; font-family: var(--font-heading); font-weight: 800; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; box-sizing: border-box;">
+                  Kép feltöltése
+                  <input type="file" accept="image/*" onChange="{{ onHeroFile }}" style="display: none;">
+                </label>
+                <sc-if value="{{ heroHas }}" hint-placeholder-val="{{ false }}">
+                  <button type="button" onClick="{{ clearHero }}" style="height: 40px; padding: 0 14px; border: 2px solid var(--color-text); background: #fff; font-family: var(--font-heading); font-weight: 800; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;">Eltávolítás</button>
+                </sc-if>
+              </div>
+              <input value="{{ heroUrl }}" onChange="{{ onHeroUrl }}" placeholder="{{ heroPh }}" style="height: 40px; border: 2px solid var(--color-neutral-400); background: #fff; padding: 0 12px; font-size: 14px; box-sizing: border-box; width: 100%;">
+              <input value="{{ heroCaption }}" onChange="{{ onHeroCaption }}" placeholder="Kép leírása (alt) – mi látható a képen? Nem jelenik meg, csak SEO" style="height: 40px; border: 2px solid var(--color-neutral-400); background: #fff; padding: 0 12px; font-size: 14px; box-sizing: border-box; width: 100%;">
+              <span style="font-size: 13px; line-height: 1.5; color: var(--color-neutral-700);">{{ heroNote }}</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+          <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-neutral-700); white-space: nowrap;">Tartalom</span>
+            <div style="flex: 1; height: 2px; background: var(--color-neutral-200);"></div>
+          </div>
+
+          <sc-for list="{{ blocks }}" as="b" hint-placeholder-count="3">
+            <div style="display: flex; flex-direction: column; gap: 10px; border: 2px solid var(--color-neutral-300); border-left: 4px solid {{ b.mark }}; padding: 12px 14px 14px; background: #fff;">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span style="font-family: var(--font-heading); font-weight: 800; font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase;">{{ b.label }}</span>
+                <span style="font-size: 12px; font-weight: 600; color: var(--color-neutral-600); flex: 1;">#{{ b.num }}</span>
+                <button type="button" onClick="{{ b.onUp }}" disabled="{{ b.first }}" aria-label="Feljebb" style="width: 32px; height: 32px; border: 2px solid var(--color-neutral-300); background: #fff; display: grid; place-items: center; cursor: pointer; padding: 0; opacity: {{ b.upOp }};"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"><path d="m6 15 6-6 6 6"></path></svg></button>
+                <button type="button" onClick="{{ b.onDown }}" disabled="{{ b.last }}" aria-label="Lejjebb" style="width: 32px; height: 32px; border: 2px solid var(--color-neutral-300); background: #fff; display: grid; place-items: center; cursor: pointer; padding: 0; opacity: {{ b.downOp }};"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"><path d="m6 9 6 6 6-6"></path></svg></button>
+                <button type="button" onClick="{{ b.onDel }}" aria-label="Blokk törlése" style="width: 32px; height: 32px; border: 2px solid var(--color-neutral-300); background: #fff; color: #c92408; display: grid; place-items: center; cursor: pointer; padding: 0;" style-hover="border-color: #ec3013;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square"><path d="M18 6 6 18M6 6l12 12"></path></svg></button>
+              </div>
+
+              <sc-if value="{{ b.isP }}" hint-placeholder-val="{{ true }}">
+                <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                  <button type="button" onMouseDown="{{ keepFocus }}" onClick="{{ b.onHead }}" title="Alcím" style="height: 32px; min-width: 32px; padding: 0 10px; border: 2px solid var(--color-neutral-300); background: #fff; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; cursor: pointer; font-family: var(--font-heading); font-weight: 900;" style-hover="border-color: var(--color-text);">H Alcím</button>
+                  <button type="button" onMouseDown="{{ keepFocus }}" onClick="{{ b.onBold }}" title="Félkövér" style="height: 32px; min-width: 32px; padding: 0 10px; border: 2px solid var(--color-neutral-300); background: #fff; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; cursor: pointer; font-weight: 900;" style-hover="border-color: var(--color-text);">B</button>
+                  <button type="button" onMouseDown="{{ keepFocus }}" onClick="{{ b.onBig }}" title="Nagyobb betű" style="height: 32px; min-width: 32px; padding: 0 10px; border: 2px solid var(--color-neutral-300); background: #fff; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; cursor: pointer; font-weight: 800;" style-hover="border-color: var(--color-text);"><span style="font-size: 16px;">A</span>+</button>
+                  <button type="button" onMouseDown="{{ keepFocus }}" onClick="{{ b.onSmall }}" title="Kisebb betű" style="height: 32px; min-width: 32px; padding: 0 10px; border: 2px solid var(--color-neutral-300); background: #fff; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; cursor: pointer; font-weight: 800;" style-hover="border-color: var(--color-text);"><span style="font-size: 11px;">A</span>−</button>
+                  <div style="display: flex; align-items: center; height: 32px; border: 2px solid var(--color-neutral-300); box-sizing: border-box; background: #fff;">
+                    <input type="number" value="{{ fsVal }}" onChange="{{ onFsVal }}" min="8" max="400" aria-label="Betűméret értéke" style="width: 56px; height: 28px; border: 0; padding: 0 6px; font-size: 13px; box-sizing: border-box; background: transparent;">
+                    <button type="button" onMouseDown="{{ keepFocus }}" onClick="{{ fsPct }}" style="height: 28px; padding: 0 9px; border: 0; border-left: 2px solid var(--color-neutral-300); background: {{ pctBg }}; color: {{ pctFg }}; font-size: 12px; font-weight: 800; cursor: pointer;">%</button>
+                    <button type="button" onMouseDown="{{ keepFocus }}" onClick="{{ fsPx }}" style="height: 28px; padding: 0 9px; border: 0; border-left: 2px solid var(--color-neutral-300); background: {{ pxBg }}; color: {{ pxFg }}; font-size: 12px; font-weight: 800; cursor: pointer;">px</button>
+                  </div>
+                  <button type="button" onMouseDown="{{ keepFocus }}" onClick="{{ b.onSize }}" title="Méret alkalmazása a kijelölésre" style="height: 32px; min-width: 32px; padding: 0 10px; border: 2px solid var(--color-neutral-300); background: #fff; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; cursor: pointer; font-weight: 700;" style-hover="border-color: var(--color-text);">Méret</button>
+                  <button type="button" onMouseDown="{{ keepFocus }}" onClick="{{ b.onUl }}" title="Felsorolás" style="height: 32px; min-width: 32px; padding: 0 10px; border: 2px solid var(--color-neutral-300); background: #fff; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; cursor: pointer; font-weight: 700;" style-hover="border-color: var(--color-text);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="M9 6h12M9 12h12M9 18h12"></path><circle cx="4" cy="6" r="1"></circle><circle cx="4" cy="12" r="1"></circle><circle cx="4" cy="18" r="1"></circle></svg>Lista</button>
+                  <button type="button" onMouseDown="{{ keepFocus }}" onClick="{{ b.onOl }}" title="Számozott lista" style="height: 32px; min-width: 32px; padding: 0 10px; border: 2px solid var(--color-neutral-300); background: #fff; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 13px; cursor: pointer; font-weight: 700;" style-hover="border-color: var(--color-text);">1. Számozott</button>
+                </div>
+                <textarea ref="{{ b.taRef }}" value="{{ b.text }}" onChange="{{ b.onText }}" rows="5" placeholder="Bekezdés szövege…" style="border: 2px solid var(--color-neutral-300); background: #fff; padding: 12px 14px; font-size: 16px; line-height: 1.6; resize: vertical; box-sizing: border-box; width: 100%;"></textarea>
+                <span style="font-size: 12px; line-height: 1.5; color: var(--color-neutral-700);">Jelöld ki a szöveget, és nyomd meg a gombot. „## ” a sor elején = alcím · **szöveg** = félkövér · [m=120%]…[/m] vagy [m=20px]…[/m] = betűméret · „- ” a sor elején = felsorolás · üres sor = új bekezdés</span>
+              </sc-if>
+              <sc-if value="{{ b.isH }}" hint-placeholder-val="{{ false }}">
+                <input value="{{ b.text }}" onChange="{{ b.onText }}" placeholder="Alcím" style="height: 48px; border: 2px solid var(--color-neutral-300); background: #fff; padding: 0 14px; font-family: var(--font-heading); font-weight: 800; font-size: 20px; box-sizing: border-box; width: 100%;">
+              </sc-if>
+              <sc-if value="{{ b.isQ }}" hint-placeholder-val="{{ false }}">
+                <textarea value="{{ b.text }}" onChange="{{ b.onText }}" rows="2" placeholder="Kiemelt idézet" style="border: 2px solid var(--color-neutral-300); background: #fff; padding: 12px 14px; font-family: var(--font-heading); font-weight: 800; font-size: 20px; line-height: 1.3; resize: vertical; box-sizing: border-box; width: 100%;"></textarea>
+              </sc-if>
+              <sc-if value="{{ b.isImg }}" hint-placeholder-val="{{ false }}">
+                <div style="display: grid; grid-template-columns: {{ imgCols }}; gap: 14px; align-items: start;">
+                  <div onDrop="{{ b.onDrop }}" onDragOver="{{ allowDrop }}" style="position: relative; aspect-ratio: 16 / 10; width: 100%; background: var(--color-neutral-100); border: 2px dashed var(--color-neutral-400); overflow: hidden; display: grid; place-items: center;">
+                    <sc-if value="{{ b.hasSrc }}" hint-placeholder-val="{{ false }}">{{ b.imgEl }}</sc-if>
+                    <sc-if value="{{ b.noSrc }}" hint-placeholder-val="{{ true }}"><span style="font-size: 14px; font-weight: 600; color: var(--color-neutral-700); padding: 16px; text-align: center;">Húzd ide a képet</span></sc-if>
+                  </div>
+                  <div style="display: flex; flex-direction: column; gap: 10px; min-width: 0;">
+                    <label style="align-self: flex-start; height: 40px; padding: 0 14px; display: flex; align-items: center; border: 2px solid #000; background: #000; color: #fff; font-family: var(--font-heading); font-weight: 800; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer; box-sizing: border-box;">
+                      Kép feltöltése
+                      <input type="file" accept="image/*" onChange="{{ b.onFile }}" style="display: none;">
+                    </label>
+                    <input value="{{ b.urlVal }}" onChange="{{ b.onSrcUrl }}" placeholder="{{ b.urlPh }}" style="height: 40px; border: 2px solid var(--color-neutral-400); background: #fff; padding: 0 12px; font-size: 14px; box-sizing: border-box; width: 100%;">
+                    <input value="{{ b.caption }}" onChange="{{ b.onCaption }}" placeholder="Kép leírása (alt) – nem jelenik meg, csak SEO" style="height: 40px; border: 2px solid var(--color-neutral-400); background: #fff; padding: 0 12px; font-size: 14px; box-sizing: border-box; width: 100%;">
+                  </div>
+                </div>
+              </sc-if>
+              <sc-if value="{{ b.isYt }}" hint-placeholder-val="{{ false }}">
+                <input value="{{ b.url }}" onChange="{{ b.onYt }}" placeholder="YouTube link vagy beágyazó kód (&lt;iframe …&gt;)" style="height: 44px; border: 2px solid var(--color-neutral-300); background: #fff; padding: 0 14px; font-size: 15px; box-sizing: border-box; width: 100%;">
+                <sc-if value="{{ b.ytEmbed }}" hint-placeholder-val="{{ false }}">
+                  <div style="position: relative; aspect-ratio: 16 / 9; width: 100%; max-width: 560px; background: #000;">
+                    <iframe src="{{ b.ytSrc }}" title="YouTube előnézet" referrerPolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen="{{ true }}" style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0;"></iframe>
+                  </div>
+                </sc-if>
+                <sc-if value="{{ b.ytLocal }}" hint-placeholder-val="{{ false }}">
+                  <a href="{{ b.ytWatch }}" target="_blank" rel="noopener" style="position: relative; display: block; aspect-ratio: 16 / 9; width: 100%; max-width: 560px; background: #000; overflow: hidden;">
+                    {{ b.ytThumbEl }}
+                    <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 72px; height: 50px; border-radius: 12px; background: #ff0000; display: grid; place-items: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"></path></svg></span>
+                    <span style="position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 14px; background: rgba(0,0,0,0.7); color: #fff; font-size: 13px; font-weight: 700;">A gépről megnyitva a YouTube nem engedi a beágyazást – kattints a lejátszáshoz. Tárhelyen a videó itt fog lejátszódni.</span>
+                  </a>
+                </sc-if>
+                <sc-if value="{{ b.ytBad }}" hint-placeholder-val="{{ false }}">
+                  <span style="font-size: 13px; font-weight: 700; color: #c92408;">Ebből a linkből nem sikerült kiolvasni a videót.</span>
+                </sc-if>
+              </sc-if>
+            </div>
+          </sc-for>
+
+          <div style="display: flex; flex-direction: column; gap: 10px; padding: 16px; border: 2px dashed var(--color-neutral-400);">
+            <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-neutral-700);">Blokk hozzáadása</span>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <sc-for list="{{ addTypes }}" as="a" hint-placeholder-count="5">
+                <button type="button" onClick="{{ a.onClick }}" style="height: 40px; padding: 0 14px; display: flex; align-items: center; gap: 8px; border: 2px solid var(--color-text); background: #fff; font-family: var(--font-heading); font-weight: 800; font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;" style-hover="background: var(--color-neutral-200);">
+                  <span style="width: 10px; height: 10px; background: {{ a.mark }};"></span>
+                  {{ a.l }}
+                </button>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 8px; padding-top: 8px; border-top: 2px solid var(--color-neutral-200); flex-wrap: wrap;">
+          <button type="button" onClick="{{ cancel }}" style="height: 48px; padding: 0 18px; border: 2px solid var(--color-text); background: #fff; font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;" style-hover="background: var(--color-neutral-200);">Mégse</button>
+          <button type="button" onClick="{{ save }}" style="height: 48px; padding: 0 28px; border: 2px solid #000; background: #000; color: #fff; font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase; cursor: pointer;" style-hover="background: #333;">Mentés</button>
+        </div>
+      </section>
+    </sc-if>
+  </div>
+
+  <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+    <div role="status" style="position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 80; background: #000; color: #fff; padding: 14px 20px; font-weight: 700; font-size: 14px; box-shadow: 4px 4px 0 #ec3013; width: max-content; max-width: calc(100vw - 32px); box-sizing: border-box;">{{ toast }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const NF_STORE = (() => {
+  const DB = 'nuflow', STORE = 'kv', KEY = 'posts';
+  const open = () => new Promise((res, rej) => { const r = indexedDB.open(DB, 1); r.onupgradeneeded = () => r.result.createObjectStore(STORE); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+  const tx = async (mode, fn) => { const db = await open(); return new Promise((res, rej) => { const t = db.transaction(STORE, mode); const q = fn(t.objectStore(STORE)); t.oncomplete = () => res(q && q.result); t.onerror = () => rej(t.error); }); };
+  const getDraft = () => tx('readonly', s => s.get(KEY)).catch(() => null);
+  const setDraft = posts => tx('readwrite', s => s.put(posts, KEY));
+  const clearDraft = () => tx('readwrite', s => s.delete(KEY));
+  const loadFile = async () => { try { const r = await fetch('posts.json', { cache: 'no-store' }); if (!r.ok) return null; const j = await r.json(); return Array.isArray(j) ? j : j.posts; } catch (e) { return null; } };
+  const SUB_ALIASES = { 'Többi': 'Több', 'Egyéb': 'Több', 'Hiphop/Rap': 'Hiphop', 'Nu Metal': 'NuMetal' };
+  const normalize = posts => posts.map(p => (SUB_ALIASES[p.sub] ? { ...p, sub: SUB_ALIASES[p.sub] } : p));
+  const loadPosts = async () => {
+    const d = await getDraft();
+    if (d && d.length) { const n = normalize(d); if (n.some((p, i) => p !== d[i])) setDraft(n).catch(() => {}); return { posts: n, source: 'draft' }; }
+    const f = await loadFile();
+    return f ? { posts: normalize(f), source: 'file' } : null;
+  };
+  const HU = ['jan.', 'febr.', 'márc.', 'ápr.', 'máj.', 'jún.', 'júl.', 'aug.', 'szept.', 'okt.', 'nov.', 'dec.'];
+  const huDate = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); return m ? m[1] + '. ' + HU[+m[2] - 1] + ' ' + (+m[3]) + '.' : (iso || ''); };
+  return { getDraft, setDraft, clearDraft, loadFile, loadPosts, huDate };
+})();
+const MENU = [
+  { key: 'Zene', subs: ['Hiphop', 'NuMetal', 'Metalcore', 'Több'] },
+  { key: 'Sport', subs: ['NBA', 'Foci', 'Forma1', 'Darts', 'Több'] },
+  { key: 'Fashion', subs: [] },
+  { key: 'Mix', subs: [] },
+];
+const CAT_COLORS = {
+  Zene: ['#201e1d', '#fff'],
+  Sport: ['oklch(0.55 0.23 262)', '#fff'],
+  Fashion: ['oklch(0.6 0.25 345)', '#fff'],
+  Mix: ['oklch(0.88 0.21 128)', '#201e1d'],
+};
+const TYPES = [
+  { t: 'p', l: 'Bekezdés', mark: 'var(--color-text)' },
+  { t: 'h2', l: 'Alcím', mark: 'var(--color-neutral-500)' },
+  { t: 'quote', l: 'Idézet', mark: '#ec3013' },
+  { t: 'img', l: 'Kép', mark: 'oklch(0.55 0.23 262)' },
+  { t: 'youtube', l: 'YouTube videó', mark: '#ff0000' },
+];
+const HU_MONTHS = ['jan.', 'febr.', 'márc.', 'ápr.', 'máj.', 'jún.', 'júl.', 'aug.', 'szept.', 'okt.', 'nov.', 'dec.'];
+const huDate = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); return m ? `${m[1]}. ${HU_MONTHS[+m[2] - 1]} ${+m[3]}.` : (iso || ''); };
+const ytId = url => { let s = (url || '').trim(); const src = /src=["']([^"']+)["']/i.exec(s); if (src) s = src[1]; if (/^[\w-]{11}$/.test(s)) return s; const m = s.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/))([\w-]{11})/); return m ? m[1] : ''; };
+const todayIso = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
+const clone = o => JSON.parse(JSON.stringify(o));
+
+class Component extends DCLogic {
+  state = { fsVal: '120', fsUnit: '%', posts: [], loaded: false, source: '', selId: null, draft: null, isNew: false, dirty: false, q: '', cat: 'Mind', w: typeof window !== 'undefined' ? window.innerWidth : 1280, toast: '' };
+
+  componentDidMount() {
+    this.onResize = () => this.setState({ w: window.innerWidth });
+    this.onUnload = e => { if (this.state.dirty) { e.preventDefault(); e.returnValue = ''; } };
+    window.addEventListener('resize', this.onResize);
+    window.addEventListener('beforeunload', this.onUnload);
+    Promise.resolve(NF_STORE).then(m => { this.store = m; return m.loadPosts(); })
+      .then(r => this.setState({ posts: r ? r.posts : [], source: r ? r.source : (location.protocol === 'file:' ? 'local' : 'empty'), loaded: true }))
+      .catch(err => { console.error('NuFlow store', err); this.setState({ loaded: true, source: 'empty' }); this.toast('Nem sikerült betölteni a posztokat: ' + (err && err.message || err)); });
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize);
+    window.removeEventListener('beforeunload', this.onUnload);
+    clearTimeout(this._tt);
+  }
+  toast(msg) { clearTimeout(this._tt); this.setState({ toast: msg }); this._tt = setTimeout(() => this.setState({ toast: '' }), 2800); }
+  guard() { return !this.state.dirty || window.confirm('Nem mentett változások vannak. Elveted őket?'); }
+  select(id) {
+    if (id === this.state.selId && this.state.draft) return;
+    if (!this.guard()) return;
+    const p = this.state.posts.find(x => x.id === id);
+    if (!p) return;
+    this.setState({ selId: id, draft: { sub: '', image: '', body: [], ...clone(p) }, isNew: false, dirty: false });
+    window.scrollTo({ top: 0 });
+  }
+  newPost() {
+    if (!this.guard()) return;
+    const id = Math.max(0, ...this.state.posts.map(p => p.id || 0)) + 1;
+    this.setState({ selId: id, isNew: true, dirty: false, draft: { id, group: 'Zene', sub: '', title: '', lead: '', date: todayIso(), image: '', body: [{ type: 'p', text: '' }] } });
+    window.scrollTo({ top: 0 });
+  }
+  closeEditor() { if (!this.guard()) return; this.setState({ draft: null, selId: null, dirty: false, isNew: false }); }
+  upd(patch) { this.setState(s => ({ draft: { ...s.draft, ...patch }, dirty: true })); }
+  updBlock(i, patch) { this.setState(s => { const body = s.draft.body.slice(); body[i] = { ...body[i], ...patch }; return { draft: { ...s.draft, body }, dirty: true }; }); }
+  moveBlock(i, d) { this.setState(s => { const body = s.draft.body.slice(); const j = i + d; if (j < 0 || j >= body.length) return null; [body[i], body[j]] = [body[j], body[i]]; return { draft: { ...s.draft, body }, dirty: true }; }); }
+  delBlock(i) {
+    const b = this.state.draft.body[i];
+    const hasContent = b && ((b.text || '').trim() || b.src || b.url);
+    if (hasContent && !window.confirm('Törlöd ezt a blokkot?')) return;
+    this.setState(s => ({ draft: { ...s.draft, body: s.draft.body.filter((_, k) => k !== i) }, dirty: true }));
+  }
+  addBlock(type) {
+    const b = type === 'img' ? { type, src: '', caption: '' } : type === 'youtube' ? { type, url: '', id: '' } : { type, text: '' };
+    this.setState(s => ({ draft: { ...s.draft, body: [...(s.draft.body || []), b] }, dirty: true }));
+  }
+  getStore() { return this.store ? Promise.resolve(this.store) : Promise.resolve(NF_STORE).then(m => (this.store = m)); }
+  selAfter(i, a, b) {
+    const el0 = this._ta && this._ta[i];
+    this._pendingSel = { i, a, b, top: el0 ? el0.scrollTop : 0, wx: window.scrollX, wy: window.scrollY };
+  }
+  applyPendingSel() {
+    const p = this._pendingSel; if (!p) return;
+    const el = this._ta && this._ta[p.i]; if (!el) return;
+    const run = () => { el.focus({ preventScroll: true }); el.setSelectionRange(p.a, p.b); el.scrollTop = p.top; window.scrollTo(p.wx, p.wy); };
+    run(); requestAnimationFrame(run); setTimeout(() => { run(); if (this._pendingSel === p) this._pendingSel = null; }, 30);
+  }
+  componentDidUpdate() { if (this._pendingSel) this.applyPendingSel(); }
+  fmtWrap(i, kind, size) {
+    const el = this._ta && this._ta[i];
+    const raw = this.state.draft.body[i].text || '';
+    const v = raw.replace(/\[(nagy|kicsi)\]([\s\S]+?)\[\/\1\]/g, (m, k, x) => '[m=' + (k === 'nagy' ? '130%' : '85%') + ']' + x + '[/m]');
+    const s0 = el ? el.selectionStart : v.length, s1 = el ? el.selectionEnd : v.length;
+    const isB = kind === 'b';
+    const src = isB ? '\\*\\*([\\s\\S]+?)\\*\\*' : '\\[m=([^\\]]+)\\]([\\s\\S]+?)\\[\\/m\\]';
+    const open = isB ? '**' : '[m=' + size + ']', close = isB ? '**' : '[/m]';
+    const re = new RegExp(src, 'g'); let m;
+    while ((m = re.exec(v))) {
+      const ms = m.index, me = ms + m[0].length;
+      const inside = s1 > s0 ? (ms <= s0 && me >= s1) : (s0 > ms && s0 < me);
+      if (!inside) continue;
+      const inner = isB ? m[1] : m[2];
+      const same = isB || m[1] === size;
+      const rep = same ? inner : open + inner + close;
+      this.updBlock(i, { text: v.slice(0, ms) + rep + v.slice(me) });
+      const st = ms + (same ? 0 : open.length);
+      this.selAfter(i, st, st + inner.length);
+      return;
+    }
+    const sel = v.slice(s0, s1);
+    const stripped = sel.replace(new RegExp(src, 'g'), '$' + (isB ? 1 : 2));
+    if (s1 > s0 && stripped !== sel) { this.updBlock(i, { text: v.slice(0, s0) + stripped + v.slice(s1) }); this.selAfter(i, s0, s0 + stripped.length); return; }
+    let out;
+    if (sel.includes('\n')) {
+      out = sel.split('\n').map(l => { const p = /^(\s*(?:##|[-•*]|\d+[.)])\s+)?(.*)$/.exec(l); return p[2].trim() ? (p[1] || '') + open + p[2] + close : l; }).join('\n');
+      this.updBlock(i, { text: v.slice(0, s0) + out + v.slice(s1) });
+      this.selAfter(i, s0, s0 + out.length);
+      return;
+    }
+    const inner = sel || (isB ? 'félkövér szöveg' : 'szöveg');
+    this.updBlock(i, { text: v.slice(0, s0) + open + inner + close + v.slice(s1) });
+    this.selAfter(i, s0 + open.length, s0 + open.length + inner.length);
+  }
+  fmtList(i, kind) {
+    const el = this._ta && this._ta[i]; const v = this.state.draft.body[i].text || '';
+    const s0 = el ? el.selectionStart : 0, s1 = el ? el.selectionEnd : v.length;
+    const ls = v.lastIndexOf('\n', s0 - 1) + 1; let le = v.indexOf('\n', s1); if (le < 0) le = v.length;
+    const lines = v.slice(ls, le).split('\n');
+    const re = kind === 'h' ? /^\s*##\s+/ : kind === 'ul' ? /^\s*[-•*]\s+/ : /^\s*\d+[.)]\s+/;
+    const all = lines.filter(l => l.trim()).every(l => re.test(l));
+    let n = 0;
+    const out = lines.map(l => { if (!l.trim()) return l; const bare = l.replace(/^\s*(##|[-•*]|\d+[.)])\s+/, ''); if (all) return bare; n++; return (kind === 'h' ? '## ' : kind === 'ul' ? '- ' : n + '. ') + bare; }).join('\n');
+    this.updBlock(i, { text: v.slice(0, ls) + out + v.slice(le) });
+    this.selAfter(i, ls, ls + out.length);
+  }
+  async persist(posts, msg) {
+    this.setState({ posts, source: 'draft' });
+    try { await (await this.getStore()).setDraft(posts); this.toast(msg); }
+    catch (e) { this.toast('Mentés sikertelen: ' + (e && e.message || 'ismeretlen hiba')); }
+  }
+  save() {
+    const d = this.state.draft;
+    if (!d.title.trim()) { this.toast('Adj meg egy címet'); return; }
+    const body = (d.body || []).filter(b => b.type === 'img' ? b.src : b.type === 'youtube' ? b.id : (b.text || '').trim());
+    const clean = { ...d, title: d.title.trim(), lead: (d.lead || '').trim(), imageCaption: (d.imageCaption || '').trim(), body };
+    const exists = this.state.posts.some(p => p.id === d.id);
+    const posts = exists ? this.state.posts.map(p => p.id === d.id ? clean : p) : [clean, ...this.state.posts];
+    this.setState({ draft: clean, isNew: false, dirty: false });
+    this.persist(posts, exists ? 'Változások mentve' : 'Új poszt mentve');
+  }
+  cancel() {
+    if (!this.guard()) return;
+    if (this.state.isNew) { this.setState({ draft: null, selId: null, dirty: false, isNew: false }); return; }
+    const p = this.state.posts.find(x => x.id === this.state.selId);
+    this.setState({ draft: p ? { sub: '', image: '', body: [], ...clone(p) } : null, dirty: false });
+  }
+  remove() {
+    const d = this.state.draft;
+    if (!window.confirm('Biztosan törlöd ezt a posztot?\n\n„' + (d.title || 'cím nélkül') + '”')) return;
+    if (this.state.isNew) { this.setState({ draft: null, selId: null, dirty: false, isNew: false }); return; }
+    const posts = this.state.posts.filter(p => p.id !== d.id);
+    this.setState({ draft: null, selId: null, dirty: false });
+    this.persist(posts, 'Poszt törölve');
+  }
+  exportJson() {
+    if (this.state.dirty && !window.confirm('A szerkesztett poszt nincs mentve, az exportban nem lesz benne. Folytatod?')) return;
+    const blob = new Blob([JSON.stringify({ posts: this.state.posts }, null, 2)], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob); a.download = 'posts.json';
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(a.href), 2000);
+    this.toast('posts.json letöltve');
+  }
+  importJson(e) {
+    const f = e.target.files && e.target.files[0]; e.target.value = '';
+    if (!f || !this.guard()) return;
+    f.text().then(txt => {
+      const j = JSON.parse(txt); const posts = Array.isArray(j) ? j : j.posts;
+      if (!Array.isArray(posts)) throw new Error('nem NuFlow posztfájl');
+      this.setState({ draft: null, selId: null, dirty: false });
+      this.persist(posts, posts.length + ' poszt importálva');
+    }).catch(err => this.toast('Importálás sikertelen: ' + err.message));
+  }
+  async resetDraft() {
+    if (!window.confirm('Visszaállítod a posts.json tartalmát? Az itt mentett változások elvesznek.')) return;
+    const st = await this.getStore();
+    await st.clearDraft();
+    const f = await st.loadFile();
+    this.setState({ posts: f || [], source: f ? 'file' : 'empty', draft: null, selId: null, dirty: false });
+    this.toast('Visszaállítva');
+  }
+  readImage(file, max = 1600) {
+    return new Promise((res, rej) => {
+      const url = URL.createObjectURL(file); const img = new Image();
+      img.onload = () => {
+        const sc = Math.min(1, max / Math.max(img.width, img.height));
+        const c = document.createElement('canvas');
+        c.width = Math.round(img.width * sc); c.height = Math.round(img.height * sc);
+        const ctx = c.getContext('2d'); ctx.fillStyle = '#fff'; ctx.fillRect(0, 0, c.width, c.height);
+        ctx.drawImage(img, 0, 0, c.width, c.height); URL.revokeObjectURL(url);
+        res(c.toDataURL('image/jpeg', 0.82));
+      };
+      img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('bad image')); };
+      img.src = url;
+    });
+  }
+  takeImage(file, apply) {
+    if (!file || !/^image\//.test(file.type)) { if (file) this.toast('Ez nem képfájl'); return; }
+    this.readImage(file).then(apply).catch(() => this.toast('A kép nem tölthető be'));
+  }
+
+  renderVals() {
+    const s = this.state, d = s.draft;
+    const narrow = s.w < 900;
+    const sorted = s.posts.map((p, i) => ({ p, i })).sort((a, b) => (b.p.date || '').localeCompare(a.p.date || '') || a.i - b.i).map(x => x.p);
+    const qq = s.q.trim().toLowerCase();
+    const filtered = sorted.filter(p => (s.cat === 'Mind' || p.group === s.cat) && (!qq || (p.title || '').toLowerCase().includes(qq)));
+    const items = filtered.map((p, i) => {
+      const [cbg, cfg] = CAT_COLORS[p.group] || CAT_COLORS.Mix;
+      const sel = p.id === s.selId;
+      return {
+        title: p.title || '(cím nélkül)', date: huDate(p.date), label: p.sub && p.sub !== 'Több' ? p.sub : p.group, cbg, cfg,
+        hasImg: !!p.image, image: p.image || '', imgEl: p.image ? React.createElement('img', { src: p.image, alt: '', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' } }) : null, border: i ? '2px solid var(--color-neutral-200)' : '0',
+        mark: sel ? '#ec3013' : 'transparent', bg: sel ? 'var(--color-neutral-100)' : '#fff',
+        onClick: () => this.select(p.id),
+      };
+    });
+    const cats = ['Mind', 'Zene', 'Sport', 'Fashion', 'Mix'].map(c => ({ l: c, bg: s.cat === c ? '#000' : '#fff', fg: s.cat === c ? '#fff' : 'var(--color-text)', onClick: () => this.setState({ cat: c }) }));
+
+    let ed = { d: {}, groupOpts: [], subOpts: [], hasSubs: false, blocks: [] };
+    if (d) {
+      const menu = MENU.find(m => m.key === d.group) || MENU[0];
+      const isData = /^data:/.test(d.image || '');
+      ed = {
+        d,
+        groupOpts: MENU.map(m => { const on = m.key === d.group; const [c, f] = CAT_COLORS[m.key]; return { l: m.key, bg: on ? c : '#fff', fg: on ? f : 'var(--color-text)', border: on ? c : 'var(--color-text)', onClick: () => this.upd({ group: m.key, sub: '' }) }; }),
+        hasSubs: menu.subs.length > 0,
+        subOpts: [{ v: '', l: 'Nincs alkategória' }, ...menu.subs.map(x => ({ v: x, l: x === 'Több' ? 'Több..' : x }))].map(o => { const on = (d.sub || '') === o.v; return { l: o.l, bg: on ? 'var(--color-text)' : '#fff', fg: on ? '#fff' : 'var(--color-text)', border: on ? 'var(--color-text)' : 'var(--color-neutral-300)', onClick: () => this.upd({ sub: o.v }) }; }),
+        heroHas: !!d.image, heroNone: !d.image, heroImgEl: d.image ? React.createElement('img', { src: d.image, alt: '', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' } }) : null,
+        heroUrl: isData ? '' : (d.image || ''),
+        heroPh: isData ? 'Feltöltött kép (a posztba beágyazva)' : 'vagy kép címe: https://… / images/kep.jpg',
+        heroNote: d.image ? (isData ? 'A feltöltött kép a posts.json-ba kerül, külön nem kell feltölteni.' : 'Ezt a képet a megadott címről tölti be az oldal.') : 'Ha nincs kép, a kártyákon szürke helykitöltő látszik.',
+        blocks: (d.body || []).map((b, i, arr) => {
+          const T = TYPES.find(x => x.t === b.type) || TYPES[0];
+          const srcData = /^data:/.test(b.src || '');
+          return {
+            ...b, text: b.text || '', caption: b.caption || '', url: b.url || '', label: T.l, mark: T.mark, num: i + 1,
+            isP: b.type === 'p', isH: b.type === 'h2', isQ: b.type === 'quote', isImg: b.type === 'img', isYt: b.type === 'youtube',
+            first: i === 0, last: i === arr.length - 1, upOp: i === 0 ? 0.35 : 1, downOp: i === arr.length - 1 ? 0.35 : 1,
+            hasSrc: !!b.src, noSrc: !b.src, src: b.src || '', imgEl: b.src ? React.createElement('img', { src: b.src, alt: '', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' } }) : null,
+            urlVal: srcData ? '' : (b.src || ''), urlPh: srcData ? 'Feltöltött kép (beágyazva)' : 'vagy kép címe: https://… / images/kep.jpg',
+            ytOk: !!b.id, ytEmbed: !!b.id && location.protocol !== 'file:', ytLocal: !!b.id && location.protocol === 'file:', ytWatch: 'https://www.youtube.com/watch?v=' + (b.id || ''), ytThumbEl: b.id ? React.createElement('img', { src: 'https://i.ytimg.com/vi/' + b.id + '/hqdefault.jpg', alt: 'YouTube videó', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 } }) : null,  ytBad: !!(b.url || '').trim() && !b.id, ytSrc: 'https://www.youtube.com/embed/' + (b.id || '') + '?rel=0',
+            onText: e => this.updBlock(i, { text: e.target.value }),
+            taRef: el => { (this._ta || (this._ta = {}))[i] = el; },
+            onHead: () => this.fmtList(i, 'h'), onBold: () => this.fmtWrap(i, 'b'), onBig: () => this.fmtWrap(i, 'size', '130%'), onSmall: () => this.fmtWrap(i, 'size', '85%'),
+            onSize: () => { const n = parseFloat(s.fsVal); if (!isFinite(n) || n <= 0) { this.toast('Adj meg egy méretet'); return; } const v = s.fsUnit === 'px' ? Math.min(96, Math.max(8, n)) : Math.min(400, Math.max(40, n)); this.fmtWrap(i, 'size', v + s.fsUnit); }, onUl: () => this.fmtList(i, 'ul'), onOl: () => this.fmtList(i, 'ol'),
+            onCaption: e => this.updBlock(i, { caption: e.target.value }),
+            onSrcUrl: e => this.updBlock(i, { src: e.target.value.trim() }),
+            onYt: e => this.updBlock(i, { url: e.target.value, id: ytId(e.target.value) }),
+            onFile: e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; this.takeImage(f, src => this.updBlock(i, { src })); },
+            onDrop: e => { e.preventDefault(); this.takeImage(e.dataTransfer.files[0], src => this.updBlock(i, { src })); },
+            onUp: () => this.moveBlock(i, -1), onDown: () => this.moveBlock(i, 1), onDel: () => this.delBlock(i),
+          };
+        }),
+      };
+    }
+
+    const saved = d && s.posts.some(p => p.id === d.id);
+    return {
+      ...ed,
+      narrow,
+      cols: narrow ? 'minmax(0, 1fr)' : s.w < 1200 ? 'minmax(0, 320px) minmax(0, 1fr)' : 'minmax(0, 380px) minmax(0, 1fr)',
+      listPos: narrow ? 'static' : 'sticky', listMaxH: narrow ? 'none' : 'calc(100vh - 290px)',
+      metaCols: s.w < 640 || (s.w >= 900 && s.w < 1200) ? 'minmax(0, 1fr)' : 'minmax(0, 1fr) 200px',
+      imgCols: s.w < 640 || (s.w >= 900 && s.w < 1200) ? 'minmax(0, 1fr)' : 'minmax(0, 280px) minmax(0, 1fr)',
+      showList: !narrow || !d, showEditor: !!d, showEmpty: !narrow && !d && s.loaded,
+      isDraftSrc: s.source === 'draft', isLocalEmpty: s.source === 'local' && s.posts.length === 0,
+      countLabel: filtered.length === s.posts.length ? s.posts.length + ' poszt' : filtered.length + ' / ' + s.posts.length + ' poszt',
+      q: s.q, onQ: e => this.setState({ q: e.target.value }), cats, items, noItems: s.loaded && items.length === 0,
+      editorTitle: s.isNew ? 'Új poszt' : 'Poszt szerkesztése',
+      statusText: s.dirty ? 'Nem mentett változások' : saved ? 'Mentve' : 'Még nincs mentve',
+      statusColor: s.dirty ? '#c92408' : 'var(--color-neutral-700)',
+      canView: !!saved && !s.dirty, viewHref: d ? 'index.html#post-' + d.id : '#',
+      onTitle: e => this.upd({ title: e.target.value }),
+      onLead: e => this.upd({ lead: e.target.value }),
+      onDate: e => this.upd({ date: e.target.value }),
+      onHeroFile: e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; this.takeImage(f, image => this.upd({ image })); },
+      onHeroDrop: e => { e.preventDefault(); this.takeImage(e.dataTransfer.files[0], image => this.upd({ image })); },
+      onHeroUrl: e => this.upd({ image: e.target.value.trim() }),
+      clearHero: () => this.upd({ image: '' }),
+      heroCaption: d ? (d.imageCaption || '') : '', onHeroCaption: e => this.upd({ imageCaption: e.target.value }),
+      allowDrop: e => e.preventDefault(), keepFocus: e => e.preventDefault(),
+      fsVal: s.fsVal, onFsVal: e => this.setState({ fsVal: e.target.value }),
+      fsPct: () => this.setState({ fsUnit: '%', fsVal: s.fsUnit === '%' ? s.fsVal : '120' }), fsPx: () => this.setState({ fsUnit: 'px', fsVal: s.fsUnit === 'px' ? s.fsVal : '22' }),
+      pctBg: s.fsUnit === '%' ? 'var(--color-text)' : '#fff', pctFg: s.fsUnit === '%' ? '#fff' : 'var(--color-text)',
+      pxBg: s.fsUnit === 'px' ? 'var(--color-text)' : '#fff', pxFg: s.fsUnit === 'px' ? '#fff' : 'var(--color-text)',
+      addTypes: TYPES.map(x => ({ l: x.l, mark: x.mark, onClick: () => this.addBlock(x.t) })),
+      newPost: () => this.newPost(), closeEditor: () => this.closeEditor(),
+      save: () => this.save(), cancel: () => this.cancel(), remove: () => this.remove(),
+      exportJson: () => this.exportJson(), importJson: e => this.importJson(e), resetDraft: () => this.resetDraft(),
+      hasToast: !!s.toast, toast: s.toast,
+    };
+  }
+}
+</script>
+</body>
+</html>

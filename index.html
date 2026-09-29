@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NuFlow</title>
+<link rel="stylesheet" href="_ds/modernist-156e465f-c4f1-439f-91ef-caf9a1ccda8e/styles.css">
+<script src="_ds/modernist-156e465f-c4f1-439f-91ef-caf9a1ccda8e/_ds_bundle.js"></script>
+<style>
+body { margin: 0; background: #fff; color: var(--color-text); font-family: var(--font-body); -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration: none; }
+a:hover { color: var(--color-accent); }
+button { font-family: inherit; }
+</style>
+</helmet>
+<div style="min-height: 100vh; background: #fff; display: flex; flex-direction: column;">
+
+  <div style="height: {{ spacerH }}; flex: none;"></div>
+  <header style="position: fixed; top: 0; left: 0; right: 0; z-index: 50; background: #fff;">
+    <div style="color: #fff; height: {{ topH }}; overflow: hidden; transition: height 0.2s ease; background-color: #424442">
+      <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); height: 36px; display: flex; align-items: center; gap: 20px;">
+        <span style="font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #cfcccc; white-space: nowrap;">{{ today }}</span>
+        <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0;">
+            <span style="background: {{ accent }}; color: #fff; font-size: 11px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; padding: 3px 7px;">Friss</span>
+            <a href="#" onClick="{{ openTicker }}" style="font-size: 13px; font-weight: 600; color: #fff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0;">{{ ticker }}</a>
+          </div>
+        </sc-if>
+        <div style="display: flex; align-items: center; gap: 2px; margin-left: auto;">
+          <a href="https://facebook.com" aria-label="Facebook" style="width: 32px; height: 32px; display: grid; place-items: center; color: #fff;" style-hover="color: var(--color-accent-400);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg></a>
+          <a href="https://instagram.com" aria-label="Instagram" style="width: 32px; height: 32px; display: grid; place-items: center; color: #fff;" style-hover="color: var(--color-accent-400);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.4A4 4 0 1 1 12.6 8 4 4 0 0 1 16 11.4z"></path><path d="M17.5 6.5h.01"></path></svg></a>
+          <a href="mailto:hello@nuflow.hu" aria-label="Email" style="width: 32px; height: 32px; display: grid; place-items: center; color: #fff;" style-hover="color: var(--color-accent-400);"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><rect x="2" y="4" width="20" height="16"></rect><path d="m22 7-10 6L2 7"></path></svg></a>
+        </div>
+      </div>
+    </div>
+
+    <div style="border-bottom: {{ rule }}; background: {{ barBg }}; transition: background 0.2s ease;">
+      <div style="max-width: 1280px; margin: 0 auto; padding: 0 0 0 clamp(16px, 4vw, 40px); height: {{ mainH }}; display: flex; align-items: stretch; transition: height 0.2s ease;">
+        <a href="#" onClick="{{ goHome }}" style="display: flex; align-items: center; gap: 12px; padding-right: 24px;" aria-label="NuFlow főoldal">
+          <span style="display: flex; flex-direction: column; gap: 4px;">
+            <sc-if value="{{ logoOnLight }}" hint-placeholder-val="{{ true }}"><img data-logo-mark="true" src="assets/nuflow-logo-v2.png" alt="NuFlow" style="display: block; height: {{ logoH }}; width: auto; transition: height 0.2s ease;"></sc-if>
+            <sc-if value="{{ logoOnDark }}" hint-placeholder-val="{{ false }}"><img src="assets/nuflow-logo-v2-light.png" alt="NuFlow" style="display: block; height: {{ logoH }}; width: auto; transition: height 0.2s ease;"></sc-if>
+            <sc-if value="{{ showTagline }}" hint-placeholder-val="{{ true }}">
+              <div style="box-sizing: border-box; display: flex; flex-direction: column; gap: 12px"><span style="font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: {{ barMuted }}; white-space: nowrap">New.Movement.Style.<br></span></div>
+            </sc-if>
+          </span>
+        </a>
+
+        <sc-if value="{{ isDesktop }}" hint-placeholder-val="{{ true }}">
+          <nav style="display: flex; align-items: stretch; margin-left: auto;">
+            <sc-for list="{{ menu }}" as="m" hint-placeholder-count="5">
+              <div onMouseEnter="{{ m.onEnter }}" onMouseMove="{{ m.onEnter }}" onMouseLeave="{{ m.onLeave }}" style="position: relative; display: flex; align-items: stretch;">
+                <a href="#" onClick="{{ m.onClick }}" style="display: flex; align-items: center; gap: 8px; padding: 0 22px; background: {{ m.bg }}; color: {{ m.fg }}; font-family: var(--font-heading); font-weight: 800; font-size: 14px; letter-spacing: 0.08em; text-transform: uppercase; transition: background 0.12s ease;">
+                  {{ m.label }}
+                  <sc-if value="{{ m.hasSub }}" hint-placeholder-val="{{ false }}">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="square" style="transform: {{ m.caret }}; transition: transform 0.15s ease;"><path d="m6 9 6 6 6-6"></path></svg>
+                  </sc-if>
+                </a>
+                <sc-if value="{{ m.open }}" hint-placeholder-val="{{ false }}">
+                  <div style="position: absolute; top: calc(100% + 2px); left: 0; width: 300px; background: #fff; border: 2px solid var(--color-text); border-top: 0; display: flex; flex-direction: column;" style-before="content: ''; position: absolute; left: 0; right: 0; top: -12px; height: 12px;">
+                    <div style="height: 6px; background: {{ m.dot }};"></div>
+                    <a href="#" onClick="{{ m.onClick }}" style="display: flex; align-items: center; justify-content: space-between; padding: 16px; font-family: var(--font-heading); font-weight: 800; font-size: 18px; letter-spacing: -0.01em; border-bottom: 2px solid var(--color-text);" style-hover="background: var(--color-neutral-200);">
+                      <span style="white-space: nowrap;">Összes {{ m.label }}</span>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>
+                    </a>
+                    <sc-for list="{{ m.subs }}" as="s" hint-placeholder-count="4">
+                      <a href="#" onClick="{{ s.onClick }}" style="display: flex; align-items: center; gap: 12px; padding: 13px 16px; font-weight: 700; font-size: 15px; border-top: {{ s.border }};" style-hover="background: var(--color-neutral-200);">
+                        <span style="width: 10px; height: 10px; background: {{ s.dot }}; flex: none;"></span>
+                        <span style="flex: 1;">{{ s.label }}</span>
+                      </a>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </nav>
+        </sc-if>
+
+        <button type="button" onClick="{{ toggleSearch }}" aria-label="Keresés" style="margin-left: {{ searchMl }}; width: {{ mainH }}; border: 0; background: {{ searchBg }}; color: {{ searchFg }}; display: grid; place-items: center; cursor: pointer; padding: 0; transition: width 0.2s ease;">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><circle cx="11" cy="11" r="7"></circle><path d="m21 21-4.3-4.3"></path></svg>
+        </button>
+
+        <sc-if value="{{ isMobile }}" hint-placeholder-val="{{ false }}">
+          <button type="button" onClick="{{ toggleMobile }}" aria-label="Menü" style="width: {{ mainH }}; border: 0; border-left: 2px solid var(--color-text); background: {{ burgerBg }}; color: {{ burgerFg }}; display: grid; place-items: center; cursor: pointer; padding: 0;">
+            <sc-if value="{{ mobileOpen }}" hint-placeholder-val="{{ false }}">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+            </sc-if>
+            <sc-if value="{{ mobileClosed }}" hint-placeholder-val="{{ true }}">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="M3 6h18M3 12h18M3 18h18"></path></svg>
+            </sc-if>
+          </button>
+        </sc-if>
+      </div>
+    </div>
+
+    <sc-if value="{{ showStripe }}" hint-placeholder-val="{{ true }}">
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); height: 4px;">
+        <sc-for list="{{ stripe }}" as="c" hint-placeholder-count="4">
+          <span style="background: {{ c }};"></span>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ searchOpen }}" hint-placeholder-val="{{ false }}">
+      <div style="border-bottom: {{ rule }}; background: #fff;">
+        <div style="max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); display: flex; align-items: center; gap: 16px;">
+          <input value="{{ q }}" onChange="{{ onQ }}" autoFocus="{{ true }}" placeholder="Keresés a posztok között…" style="flex: 1; min-width: 0; height: 72px; border: 0; outline: none; background: transparent; font-family: var(--font-heading); font-weight: 800; font-size: clamp(20px, 3vw, 30px); letter-spacing: -0.02em; color: var(--color-text);">
+          <span style="font-size: 13px; font-weight: 600; color: var(--color-neutral-700); white-space: nowrap;">{{ postCount }}</span>
+        </div>
+      </div>
+    </sc-if>
+
+    <sc-if value="{{ showMobileMenu }}" hint-placeholder-val="{{ false }}">
+      <div style="border-top: {{ rule }}; background: #fff; max-height: calc(100vh - 74px); overflow-y: auto;">
+        <sc-for list="{{ menu }}" as="m" hint-placeholder-count="5">
+          <div style="border-bottom: 2px solid var(--color-neutral-300);">
+            <a href="#" onClick="{{ m.onClick }}" style="display: block; padding: 18px 20px; font-family: var(--font-heading); font-weight: 800; font-size: 22px; letter-spacing: -0.01em; color: {{ m.color }};">{{ m.label }}</a>
+            <sc-if value="{{ m.hasSub }}" hint-placeholder-val="{{ false }}">
+              <div style="display: flex; flex-wrap: wrap; gap: 8px; padding: 0 20px 18px;">
+                <sc-for list="{{ m.subs }}" as="s" hint-placeholder-count="4">
+                  <a href="#" onClick="{{ s.onClick }}" style="display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border: 2px solid var(--color-text); font-weight: 700; font-size: 15px;">
+                    <span style="width: 8px; height: 8px; background: {{ s.dot }};"></span>{{ s.label }}
+                  </a>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+  </header>
+
+  <main style="flex: 1; width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); box-sizing: border-box;">
+   <sc-if value="{{ isList }}" hint-placeholder-val="{{ true }}">
+
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 36px 0 20px;">
+      <div style="display: flex; flex-direction: column; gap: 16px; flex: 1 1 auto; min-width: 0;">
+        <span style="white-space: nowrap; font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-neutral-700);">{{ crumb }}</span>
+        <h1 style="margin: 0; font-family: var(--font-heading); font-weight: 900; font-size: {{ titleSize }}; line-height: 0.92; letter-spacing: -0.045em; text-transform: uppercase;">{{ pageTitle }}</h1>
+      </div>
+      <span style="font-size: 14px; font-weight: 600; color: var(--color-neutral-700);">{{ postCount }}</span>
+    </div>
+    <div style="height: {{ ruleW }}; background: {{ ruleC }};"></div>
+
+    <sc-if value="{{ hasHero }}" hint-placeholder-val="{{ true }}">
+      <section style="display: grid; grid-template-columns: {{ heroCols }}; gap: 0; padding: 28px 0 36px;">
+        <a href="#" onClick="{{ hero.onOpen }}" style="display: flex; flex-direction: column; gap: 16px; padding-right: {{ heroGapR }}; border-right: {{ heroDivider }}; padding-bottom: {{ heroGapB }};">
+          <div style="position: relative; aspect-ratio: 16 / 10; width: 100%; background: var(--color-neutral-200);">
+              <div style="position: absolute; inset: 0; filter: {{ hero.filter }};"><sc-if value="{{ hero.hasImg }}" hint-placeholder-val="{{ false }}">{{ hero.imgEl }}</sc-if></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+            <span style="background: {{ hero.bg }}; color: {{ hero.fg }}; border: {{ hero.bBorder }}; border-radius: {{ bRadius }}; box-sizing: border-box; font-family: var(--font-heading); font-weight: 800; font-size: calc(13px * {{ bScale }}); letter-spacing: 0.08em; text-transform: uppercase; padding: calc(6px * {{ bScale }}) calc(10px * {{ bScale }});">{{ hero.label }}</span>
+            <span style="font-size: 13px; font-weight: 600; color: var(--color-neutral-700); white-space: nowrap;">{{ hero.date }}</span>
+          </div>
+          <h2 style="margin: 0; font-family: var(--font-heading); font-weight: 900; font-size: clamp(30px, 3.6vw, 50px); line-height: 1.0; letter-spacing: -0.035em; text-wrap: balance;">{{ hero.title }}</h2>
+          <p style="margin: 0; font-size: 18px; line-height: 1.55; color: var(--color-neutral-800); max-width: 60ch; text-wrap: pretty;">{{ hero.lead }}</p>
+        </a>
+
+        <div style="display: flex; flex-direction: column; padding-left: {{ heroGapL }};">
+          <sc-for list="{{ heroSide }}" as="p" hint-placeholder-count="3">
+            <a href="#" onClick="{{ p.onOpen }}" style="display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 3fr); gap: 16px; padding: 20px 0; border-top: {{ p.border }};">
+              <div style="position: relative; aspect-ratio: 1 / 1; width: 100%; background: var(--color-neutral-200);">
+              <div style="position: absolute; inset: 0; filter: {{ p.filter }};"><sc-if value="{{ p.hasImg }}" hint-placeholder-val="{{ false }}">{{ p.imgEl }}</sc-if></div>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 8px; min-width: 0;">
+                <span style="align-self: flex-start; background: {{ p.bg }}; color: {{ p.fg }}; border: {{ p.bBorder }}; border-radius: {{ bRadius }}; box-sizing: border-box; font-family: var(--font-heading); font-weight: 800; font-size: calc(12px * {{ bScale }}); letter-spacing: 0.08em; text-transform: uppercase; padding: calc(4px * {{ bScale }}) calc(8px * {{ bScale }});">{{ p.label }}</span>
+                <h3 style="margin: 0; font-family: var(--font-heading); font-weight: 800; font-size: 20px; line-height: 1.12; letter-spacing: -0.02em; text-wrap: pretty;">{{ p.title }}</h3>
+                <sc-if value="{{ showLead }}" hint-placeholder-val="{{ true }}"><p style="margin: 0; font-size: 14px; line-height: 1.5; color: var(--color-neutral-800); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;">{{ p.lead }}</p></sc-if>
+                <span style="font-size: 12px; font-weight: 600; color: var(--color-neutral-700); white-space: nowrap;">{{ p.date }}</span>
+              </div>
+            </a>
+          </sc-for>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ hasGrid }}" hint-placeholder-val="{{ true }}">
+      <div style="display: flex; align-items: center; gap: 16px; padding: 8px 0 0;">
+        <span style="width: 14px; height: 14px; background: {{ accent }};"></span>
+        <h2 style="margin: 0; white-space: nowrap; flex: none; font-family: var(--font-heading); font-weight: 900; font-size: 28px; letter-spacing: -0.03em; text-transform: uppercase;">Még több</h2>
+        <div style="flex: 1; height: {{ ruleW }}; background: {{ ruleC }};"></div>
+      </div>
+      <section style="display: grid; grid-template-columns: {{ gridCols }}; gap: {{ gridGap }}; padding: 28px 0 72px;">
+        <sc-for list="{{ gridPosts }}" as="p" hint-placeholder-count="6">
+          <a href="#" onClick="{{ p.onOpen }}" onMouseEnter="{{ p.onEnter }}" onMouseLeave="{{ p.onLeave }}" style="display: flex; flex-direction: column; gap: 12px; border: {{ cardBorder }}; padding: {{ cardPad }}; background: {{ p.cBg }}; box-shadow: {{ p.cShadow }}; transform: {{ p.cTransform }}; transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;">
+            <div style="position: relative; aspect-ratio: 16 / 10; width: 100%; background: var(--color-neutral-200);">
+              <div style="position: absolute; inset: 0; filter: {{ p.filter }};"><sc-if value="{{ p.hasImg }}" hint-placeholder-val="{{ false }}">{{ p.imgEl }}</sc-if></div>
+              <sc-if value="{{ badgeOnImage }}" hint-placeholder-val="{{ true }}"><span style="position: absolute; left: 0; top: 0; background: {{ p.bg }}; color: {{ p.fg }}; border: {{ p.bBorder }}; border-radius: {{ bRadius }}; box-sizing: border-box; font-family: var(--font-heading); font-weight: 800; font-size: calc(12px * {{ bScale }}); letter-spacing: 0.08em; text-transform: uppercase; padding: calc(6px * {{ bScale }}) calc(10px * {{ bScale }}); pointer-events: none;">{{ p.label }}</span></sc-if>
+            </div>
+            <sc-if value="{{ badgeAbove }}" hint-placeholder-val="{{ false }}"><span style="align-self: flex-start; background: {{ p.bg }}; color: {{ p.fg }}; border: {{ p.bBorder }}; border-radius: {{ bRadius }}; box-sizing: border-box; font-family: var(--font-heading); font-weight: 800; font-size: calc(12px * {{ bScale }}); letter-spacing: 0.08em; text-transform: uppercase; padding: calc(4px * {{ bScale }}) calc(8px * {{ bScale }}); margin-top: 4px;">{{ p.label }}</span></sc-if>
+            <h3 style="margin: 4px 0 0; font-family: var(--font-heading); font-weight: 800; font-size: 22px; line-height: 1.12; letter-spacing: -0.02em; text-wrap: pretty;">{{ p.title }}</h3>
+            <sc-if value="{{ showLead }}" hint-placeholder-val="{{ true }}"><p style="margin: 0; font-size: 15px; line-height: 1.55; color: var(--color-neutral-800); text-wrap: pretty;">{{ p.lead }}</p></sc-if>
+            <span style="font-size: 12px; font-weight: 600; color: var(--color-neutral-700); letter-spacing: 0.02em; white-space: nowrap;">{{ p.date }}</span>
+          </a>
+        </sc-for>
+      </section>
+    </sc-if>
+   </sc-if>
+
+   <sc-if value="{{ isArticle }}" hint-placeholder-val="{{ false }}">
+    <div style="display: grid; grid-template-columns: {{ artCols }}; gap: {{ artGap }}; padding: 32px 0 56px; align-items: start;">
+    <article style="display: flex; flex-direction: column; gap: 24px; min-width: 0; order: 1;">
+      <div style="display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+        <a href="#" onClick="{{ goBack }}" style="display: flex; align-items: center; gap: 8px; height: 40px; padding: 0 14px 0 10px; border: 2px solid var(--color-text); font-family: var(--font-heading); font-weight: 800; font-size: 13px; letter-spacing: 0.08em; text-transform: uppercase;" style-hover="background: var(--color-neutral-200);">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="M19 12H5M11 6l-6 6 6 6"></path></svg>
+          Vissza
+        </a>
+        <span style="font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-neutral-700); white-space: nowrap;">{{ art.crumb }}</span>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 20px;">
+        <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+          <span style="background: {{ art.bg }}; color: {{ art.fg }}; border: {{ art.bBorder }}; border-radius: {{ bRadius }}; box-sizing: border-box; font-family: var(--font-heading); font-weight: 800; font-size: calc(13px * {{ bScale }}); letter-spacing: 0.08em; text-transform: uppercase; padding: calc(6px * {{ bScale }}) calc(10px * {{ bScale }});">{{ art.label }}</span>
+          <span style="font-size: 13px; font-weight: 600; color: var(--color-neutral-700); white-space: nowrap;">{{ art.date }}</span>
+          <span style="font-size: 13px; font-weight: 600; color: var(--color-neutral-700); white-space: nowrap;">· {{ art.readTime }}</span>
+        </div>
+        <h1 style="margin: 0; font-family: var(--font-heading); font-weight: 900; font-size: clamp(30px, 4vw, 54px); line-height: 1.0; letter-spacing: -0.04em; text-wrap: balance;">{{ art.title }}</h1>
+        <p style="margin: 0; font-size: clamp(18px, 1.8vw, 22px); line-height: 1.5; font-weight: 500; color: var(--color-neutral-800); max-width: 62ch; text-wrap: pretty;">{{ art.lead }}</p>
+      </div>
+
+      <figure style="margin: 0; display: flex; flex-direction: column; gap: 10px;">
+      <div style="position: relative; aspect-ratio: 3 / 2; width: 100%; background: var(--color-neutral-200);">
+        <div style="position: absolute; inset: 0; filter: {{ art.filter }};"><sc-if value="{{ art.hasImg }}" hint-placeholder-val="{{ false }}">{{ art.imgEl }}</sc-if></div>
+      </div>
+      <sc-if value="{{ art.hasCap }}" hint-placeholder-val="{{ false }}"><figcaption style="font-size: 14px; line-height: 1.5; color: var(--color-neutral-700);">{{ art.imageCaption }}</figcaption></sc-if>
+      </figure>
+
+      <div style="display: flex; flex-direction: column; gap: 22px; width: 100%; padding-top: 20px; border-top: {{ rule }};">
+        <sc-for list="{{ art.blocks }}" as="b" hint-placeholder-count="4">
+          <sc-if value="{{ b.isP }}" hint-placeholder-val="{{ true }}"><div style="display: flex; flex-direction: column; gap: 22px;"><sc-for list="{{ b.parts }}" as="pt" hint-placeholder-count="1">
+            <sc-if value="{{ pt.isHead }}" hint-placeholder-val="{{ false }}"><h2 style="margin: 16px 0 0; font-family: var(--font-heading); font-weight: 900; font-size: clamp(24px, 2.4vw, 30px); line-height: 1.15; letter-spacing: -0.02em; text-wrap: balance;">{{ pt.head }}</h2></sc-if>
+            <sc-if value="{{ pt.isText }}" hint-placeholder-val="{{ true }}"><p style="margin: 0; font-size: 18px; line-height: 1.7; color: var(--color-text); text-wrap: pretty; white-space: pre-line;"><sc-for list="{{ pt.segs }}" as="sg" hint-placeholder-count="1"><sc-if value="{{ sg.b }}" hint-placeholder-val="{{ false }}"><strong style="font-weight: 800; font-size: {{ sg.fs }};">{{ sg.t }}</strong></sc-if><sc-if value="{{ sg.n }}" hint-placeholder-val="{{ true }}"><span style="font-size: {{ sg.fs }};">{{ sg.t }}</span></sc-if></sc-for></p></sc-if>
+            <sc-if value="{{ pt.isUl }}" hint-placeholder-val="{{ false }}"><ul style="margin: 0; padding-left: 1.4em; display: flex; flex-direction: column; gap: 8px; font-size: 18px; line-height: 1.6; color: var(--color-text);"><sc-for list="{{ pt.items }}" as="it" hint-placeholder-count="2"><li style="padding-left: 4px;"><sc-for list="{{ it.segs }}" as="sg" hint-placeholder-count="1"><sc-if value="{{ sg.b }}" hint-placeholder-val="{{ false }}"><strong style="font-weight: 800; font-size: {{ sg.fs }};">{{ sg.t }}</strong></sc-if><sc-if value="{{ sg.n }}" hint-placeholder-val="{{ true }}"><span style="font-size: {{ sg.fs }};">{{ sg.t }}</span></sc-if></sc-for></li></sc-for></ul></sc-if>
+            <sc-if value="{{ pt.isOl }}" hint-placeholder-val="{{ false }}"><ol style="margin: 0; padding-left: 1.5em; display: flex; flex-direction: column; gap: 8px; font-size: 18px; line-height: 1.6; color: var(--color-text);"><sc-for list="{{ pt.items }}" as="it" hint-placeholder-count="2"><li style="padding-left: 4px;"><sc-for list="{{ it.segs }}" as="sg" hint-placeholder-count="1"><sc-if value="{{ sg.b }}" hint-placeholder-val="{{ false }}"><strong style="font-weight: 800; font-size: {{ sg.fs }};">{{ sg.t }}</strong></sc-if><sc-if value="{{ sg.n }}" hint-placeholder-val="{{ true }}"><span style="font-size: {{ sg.fs }};">{{ sg.t }}</span></sc-if></sc-for></li></sc-for></ol></sc-if>
+          </sc-for></div></sc-if>
+          <sc-if value="{{ b.isH }}" hint-placeholder-val="{{ false }}"><h2 style="margin: 16px 0 0; font-family: var(--font-heading); font-weight: 900; font-size: clamp(24px, 2.4vw, 30px); line-height: 1.15; letter-spacing: -0.02em; text-wrap: balance;">{{ b.text }}</h2></sc-if>
+          <sc-if value="{{ b.isQ }}" hint-placeholder-val="{{ false }}"><blockquote style="margin: 12px 0; padding: 4px 0 4px 24px; border-left: 6px solid {{ art.bg }}; font-family: var(--font-heading); font-weight: 800; font-size: clamp(24px, 2.6vw, 32px); line-height: 1.2; letter-spacing: -0.02em; text-wrap: balance;">{{ b.text }}</blockquote></sc-if>
+          <sc-if value="{{ b.isImg }}" hint-placeholder-val="{{ false }}"><figure style="margin: 12px 0; display: flex; flex-direction: column; gap: 10px;">{{ b.imgEl }}<sc-if value="{{ b.hasCap }}" hint-placeholder-val="{{ false }}"><figcaption style="font-size: 14px; line-height: 1.5; color: var(--color-neutral-700);">{{ b.caption }}</figcaption></sc-if></figure></sc-if>
+          <sc-if value="{{ b.ytLocal }}" hint-placeholder-val="{{ false }}"><div style="margin: 12px 0;"><a href="{{ b.ytWatch }}" target="_blank" rel="noopener" style="position: relative; display: block; aspect-ratio: 16 / 9; width: 100%; background: #000; overflow: hidden;">
+                    {{ b.ytThumbEl }}
+                    <span style="position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 72px; height: 50px; border-radius: 12px; background: #ff0000; display: grid; place-items: center;"><svg width="22" height="22" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"></path></svg></span>
+                    <span style="position: absolute; left: 0; right: 0; bottom: 0; padding: 10px 14px; background: rgba(0,0,0,0.7); color: #fff; font-size: 13px; font-weight: 700;">A gépről megnyitva a YouTube nem engedi a beágyazást – kattints a lejátszáshoz. Tárhelyen a videó itt fog lejátszódni.</span>
+                  </a></div></sc-if>
+          <sc-if value="{{ b.ytEmbed }}" hint-placeholder-val="{{ false }}"><div style="margin: 12px 0; position: relative; aspect-ratio: 16 / 9; width: 100%; background: #000;"><iframe src="{{ b.ytSrc }}" title="YouTube videó" referrerPolicy="strict-origin-when-cross-origin" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowFullScreen="{{ true }}" style="position: absolute; inset: 0; width: 100%; height: 100%; border: 0;"></iframe></div></sc-if>
+        </sc-for>
+      </div>
+    </article>
+
+    <aside style="order: {{ sideOrder }}; position: {{ sidePos }}; top: 96px; display: flex; flex-direction: column; gap: 20px; min-width: 0;">
+      <div style="display: flex; align-items: center; gap: 12px; padding-bottom: 14px; border-bottom: {{ rule }};">
+        <span style="width: 14px; height: 14px; background: {{ accent }};"></span>
+        <h2 style="margin: 0; white-space: nowrap; font-family: var(--font-heading); font-weight: 900; font-size: 26px; letter-spacing: -0.03em; text-transform: uppercase;">FRISS</h2>
+      </div>
+      <sc-for list="{{ fresh }}" as="p" hint-placeholder-count="5">
+        <a href="#" onClick="{{ p.onOpen }}" style="display: grid; grid-template-columns: {{ freshCols }}; gap: 14px; align-items: start;" style-hover="color: var(--color-text);">
+          <div style="display: flex; flex-direction: column; gap: 6px;">
+            <div style="position: relative; aspect-ratio: 3 / 2; width: 100%; background: var(--color-neutral-200);">
+              <div style="position: absolute; inset: 0; filter: {{ p.filter }};"><sc-if value="{{ p.hasImg }}" hint-placeholder-val="{{ false }}">{{ p.imgEl }}</sc-if></div>
+            </div>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 6px; min-width: 0;">
+            <span style="align-self: flex-start; background: {{ p.bg }}; color: {{ p.fg }}; border: {{ p.bBorder }}; border-radius: {{ bRadius }}; box-sizing: border-box; font-family: var(--font-heading); font-weight: 800; font-size: calc(11px * {{ bScale }}); letter-spacing: 0.08em; text-transform: uppercase; padding: calc(3px * {{ bScale }}) calc(6px * {{ bScale }});">{{ p.label }}</span>
+            <h3 style="margin: 0; font-family: var(--font-heading); font-weight: 800; font-size: 17px; line-height: 1.2; letter-spacing: -0.01em; text-wrap: pretty;">{{ p.title }}</h3>
+            <span style="font-size: 12px; font-weight: 600; color: var(--color-neutral-700); white-space: nowrap;">{{ p.date }}</span>
+          </div>
+        </a>
+      </sc-for>
+    </aside>
+    </div>
+
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <span style="width: 14px; height: 14px; background: {{ accent }};"></span>
+      <h2 style="margin: 0; white-space: nowrap; flex: none; font-family: var(--font-heading); font-weight: 900; font-size: 28px; letter-spacing: -0.03em; text-transform: uppercase;">Kapcsolódó</h2>
+      <div style="flex: 1; height: {{ ruleW }}; background: {{ ruleC }};"></div>
+    </div>
+    <section style="display: grid; grid-template-columns: {{ relCols }}; gap: {{ gridGap }}; padding: 28px 0 72px;">
+      <sc-for list="{{ related }}" as="p" hint-placeholder-count="3">
+        <a href="#" onClick="{{ p.onOpen }}" onMouseEnter="{{ p.onEnter }}" onMouseLeave="{{ p.onLeave }}" style="display: flex; flex-direction: column; gap: 12px; border: {{ cardBorder }}; padding: {{ cardPad }}; background: {{ p.cBg }}; box-shadow: {{ p.cShadow }}; transform: {{ p.cTransform }}; transition: transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease;">
+          <div style="position: relative; aspect-ratio: 16 / 10; width: 100%; background: var(--color-neutral-200);">
+            <div style="position: absolute; inset: 0; filter: {{ p.filter }};"><sc-if value="{{ p.hasImg }}" hint-placeholder-val="{{ false }}">{{ p.imgEl }}</sc-if></div>
+            <span style="position: absolute; left: 0; top: 0; background: {{ p.bg }}; color: {{ p.fg }}; border: {{ p.bBorder }}; border-radius: {{ bRadius }}; box-sizing: border-box; font-family: var(--font-heading); font-weight: 800; font-size: calc(12px * {{ bScale }}); letter-spacing: 0.08em; text-transform: uppercase; padding: calc(6px * {{ bScale }}) calc(10px * {{ bScale }}); pointer-events: none;">{{ p.label }}</span>
+          </div>
+          <h3 style="margin: 4px 0 0; font-family: var(--font-heading); font-weight: 800; font-size: 22px; line-height: 1.12; letter-spacing: -0.02em; text-wrap: pretty;">{{ p.title }}</h3>
+          <span style="font-size: 12px; font-weight: 600; color: var(--color-neutral-700); letter-spacing: 0.02em; white-space: nowrap;">{{ p.date }}</span>
+        </a>
+      </sc-for>
+    </section>
+   </sc-if>
+  </main>
+
+  <footer style="background: #000; color: #fff;">
+    <div style="max-width: 1280px; margin: 0 auto; padding: 56px clamp(16px, 4vw, 40px) 32px; display: flex; flex-direction: column; gap: 40px;">
+      <div style="display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap;">
+        <div style="display: flex; flex-direction: column; gap: 16px; max-width: 380px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <img src="assets/nuflow-logo-v2-light.png" alt="NuFlow" style="display: block; height: 48px; width: auto;">
+          </div>
+          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #cfcccc;">Minden amitől flowba jövünk – egy helyen, a mi hangunkon.</p>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 14px;">
+          <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #9b9797;">Elérhetőség</span>
+          <a href="mailto:hello@nuflow.hu" style="display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 16px; color: #fff;" style-hover="color: var(--color-accent-400);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><rect x="2" y="4" width="20" height="16"></rect><path d="m22 7-10 6L2 7"></path></svg>
+            hello@nuflow.hu
+          </a>
+          <a href="https://facebook.com" style="display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 16px; color: #fff;" style-hover="color: var(--color-accent-400);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"></path></svg>
+            Facebook
+          </a>
+          <a href="https://instagram.com" style="display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 16px; color: #fff;" style-hover="color: var(--color-accent-400);">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><rect x="2" y="2" width="20" height="20" rx="5"></rect><path d="M16 11.4A4 4 0 1 1 12.6 8 4 4 0 0 1 16 11.4z"></path><path d="M17.5 6.5h.01"></path></svg>
+            Instagram
+          </a>
+        </div>
+      </div>
+      <div style="height: 2px; background: #444141;"></div>
+      <span style="font-size: 13px; color: #9b9797;">© 2026 NuFlow</span>
+    </div>
+  </footer>
+  <sc-if value="{{ isDraft }}" hint-placeholder-val="{{ false }}">
+    <a href="admin.html" style="position: fixed; left: 16px; bottom: 16px; z-index: 60; display: flex; align-items: center; gap: 8px; background: #000; color: #fff; font-size: 12px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; padding: 10px 14px;"><span style="width: 8px; height: 8px; border-radius: 50%; background: {{ accent }};"></span>Helyi piszkozat látszik</a>
+  </sc-if>
+
+  <sc-if value="{{ showTweaks }}" hint-placeholder-val="{{ false }}">
+  <button type="button" onClick="{{ toggleTweaks }}" style="position: fixed; right: 20px; bottom: 20px; z-index: 80; display: flex; align-items: center; gap: 10px; height: 52px; padding: 0 18px; background: {{ tweakBtnBg }}; color: #fff; border: 2px solid #000; font-family: var(--font-heading); font-weight: 800; font-size: 15px; letter-spacing: 0.06em; text-transform: uppercase; cursor: pointer; box-shadow: 4px 4px 0 #000;">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="M4 21v-7M4 10V3M12 21v-9M12 8V3M20 21v-5M20 12V3M1 14h6M9 8h6M17 16h6"></path></svg>
+    Tweaks
+  </button>
+  </sc-if>
+
+  <sc-if value="{{ tweaksOpen }}" hint-placeholder-val="{{ false }}">
+    <aside style="position: fixed; right: 20px; bottom: 88px; z-index: 80; width: min(340px, calc(100vw - 40px)); max-height: calc(100vh - 120px); overflow-y: auto; background: #fff; border: 2px solid #000; box-shadow: 6px 6px 0 #000; display: flex; flex-direction: column;">
+      <div style="display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; border-bottom: 2px solid #000;">
+        <span style="font-family: var(--font-heading); font-weight: 900; font-size: 18px; text-transform: uppercase; letter-spacing: 0.02em;">Tweaks</span>
+        <button type="button" onClick="{{ toggleTweaks }}" aria-label="Bezárás" style="width: 36px; height: 36px; border: 0; background: transparent; cursor: pointer; display: grid; place-items: center; color: var(--color-text);">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="square"><path d="M18 6 6 18M6 6l12 12"></path></svg>
+        </button>
+      </div>
+      <sc-for list="{{ tweakGroups }}" as="g" hint-placeholder-count="5">
+        <div style="display: flex; flex-direction: column; gap: 10px; padding: 14px 16px; border-bottom: 2px solid var(--color-neutral-300);">
+          <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-neutral-700);">{{ g.label }}</span>
+          <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+            <sc-for list="{{ g.options }}" as="o" hint-placeholder-count="3">
+              <button type="button" onClick="{{ o.onClick }}" title="{{ o.label }}" style="flex: {{ o.flex }}; min-width: 40px; height: 40px; padding: 0 10px; border: 2px solid {{ o.border }}; background: {{ o.bg }}; color: {{ o.fg }}; font-weight: 700; font-size: 14px; text-align: left; cursor: pointer; box-shadow: {{ o.ring }};">{{ o.text }}</button>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </aside>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const nfSeg = (t, b, fs) => ({ t, b, n: !b, fs });
+const nfSize = (n, u) => { n = parseFloat(n); if (!isFinite(n)) return null; return u === 'px' ? Math.min(96, Math.max(8, n)) + 'px' : Math.min(400, Math.max(40, n)) / 100 + 'em'; };
+const nfInline = (s, fs = '1em', b = false) => { const out = []; const re = /\*\*([\s\S]+?)\*\*|\[(nagy|kicsi)\]([\s\S]+?)\[\/\2\]|\[m=(\d+(?:\.\d+)?)(%|px)\]([\s\S]+?)\[\/m\]/g; let i = 0, m; while ((m = re.exec(s))) { if (m.index > i) out.push(nfSeg(s.slice(i, m.index), b, fs)); if (m[1] !== undefined) out.push(...nfInline(m[1], fs, true)); else if (m[2]) out.push(...nfInline(m[3], m[2] === 'nagy' ? '1.3em' : '0.85em', b)); else out.push(...nfInline(m[6], nfSize(m[4], m[5]) || fs, b)); i = re.lastIndex; } if (i < s.length) out.push(nfSeg(s.slice(i), b, fs)); return out; };
+const nfStrip = s => (s || '').replace(/\*\*|\[\/?(nagy|kicsi)\]|\[m=[^\]]*\]|\[\/m\]/g, '');
+const nfRich = text => {
+  const parts = []; let cur = null;
+  for (const line of (text || '').split('\n')) {
+    const hd = /^\s*##\s+(.*)$/.exec(line), ul = /^\s*[-•*]\s+(.*)$/.exec(line), ol = /^\s*\d+[.)]\s+(.*)$/.exec(line);
+    if (hd) { parts.push({ kind: 'h', lines: [nfStrip(hd[1])] }); cur = null; continue; }
+    const kind = ul ? 'ul' : ol ? 'ol' : line.trim() ? 'p' : 'gap';
+    if (kind === 'gap') { cur = null; continue; }
+    if (!cur || cur.kind !== kind) { cur = { kind, lines: [] }; parts.push(cur); }
+    cur.lines.push(ul ? ul[1] : ol ? ol[1] : line);
+  }
+  return parts.map(p => p.kind === 'h' ? { isHead: true, head: p.lines[0], isText: false, isUl: false, isOl: false, segs: [], items: [] } : p.kind === 'p' ? { isText: true, isUl: false, isOl: false, segs: nfInline(p.lines.join('\n')), items: [] }
+    : { isText: false, isUl: p.kind === 'ul', isOl: p.kind === 'ol', segs: [], items: p.lines.map(l => ({ segs: nfInline(l) })) });
+};
+const NF_STORE = (() => {
+  const DB = 'nuflow', STORE = 'kv', KEY = 'posts';
+  const open = () => new Promise((res, rej) => { const r = indexedDB.open(DB, 1); r.onupgradeneeded = () => r.result.createObjectStore(STORE); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); });
+  const tx = async (mode, fn) => { const db = await open(); return new Promise((res, rej) => { const t = db.transaction(STORE, mode); const q = fn(t.objectStore(STORE)); t.oncomplete = () => res(q && q.result); t.onerror = () => rej(t.error); }); };
+  const getDraft = () => tx('readonly', s => s.get(KEY)).catch(() => null);
+  const setDraft = posts => tx('readwrite', s => s.put(posts, KEY));
+  const clearDraft = () => tx('readwrite', s => s.delete(KEY));
+  const loadFile = async () => { try { const r = await fetch('posts.json', { cache: 'no-store' }); if (!r.ok) return null; const j = await r.json(); return Array.isArray(j) ? j : j.posts; } catch (e) { return null; } };
+  const SUB_ALIASES = { 'Többi': 'Több', 'Egyéb': 'Több', 'Hiphop/Rap': 'Hiphop', 'Nu Metal': 'NuMetal' };
+  const normalize = posts => posts.map(p => (SUB_ALIASES[p.sub] ? { ...p, sub: SUB_ALIASES[p.sub] } : p));
+  const loadPosts = async () => {
+    const d = await getDraft();
+    if (d && d.length) { const n = normalize(d); if (n.some((p, i) => p !== d[i])) setDraft(n).catch(() => {}); return { posts: n, source: 'draft' }; }
+    const f = await loadFile();
+    return f ? { posts: normalize(f), source: 'file' } : null;
+  };
+  const HU = ['jan.', 'febr.', 'márc.', 'ápr.', 'máj.', 'jún.', 'júl.', 'aug.', 'szept.', 'okt.', 'nov.', 'dec.'];
+  const huDate = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); return m ? m[1] + '. ' + HU[+m[2] - 1] + ' ' + (+m[3]) + '.' : (iso || ''); };
+  return { getDraft, setDraft, clearDraft, loadFile, loadPosts, huDate };
+})();
+const MENU = [
+  { key: 'home', label: 'Home', subs: [] },
+  { key: 'Zene', label: 'Zene', subs: ['Hiphop', 'NuMetal', 'Metalcore', 'Több'] },
+  { key: 'Sport', label: 'Sport', subs: ['NBA', 'Foci', 'Forma1', 'Darts', 'Több'] },
+  { key: 'Fashion', label: 'Fashion', subs: [] },
+  { key: 'Mix', label: 'Mix', subs: [] },
+];
+let POSTS = [
+  ['Zene', 'Metalcore', 'Új lemezzel jön a Spiritbox – itt az első kislemez', 'Sötétebb, keményebb, és meglepően dallamos: meghallgattuk az új dalt, és elmondjuk, mire számíthatsz az albumtól.', '2026. szept. 27.'],
+  ['Sport', 'NBA', 'Wembanyama már az előszezonban új szintre lépett', 'Erősebb, gyorsabb, és a hármasai is ülnek. A Spurs sztárja idén az MVP-versenyben is ott lehet.', '2026. szept. 27.'],
+  ['Mix', null, 'Összehajtható telefonok: megérik végre az árukat?', 'Három csúcsmodellt teszteltünk egy hétig. A zsanér már nem gyenge pont, az akku viszont még mindig az.', '2026. szept. 26.'],
+  ['Zene', 'Hiphop', 'Hazai rapperek, akikre idén figyelni kell', 'Öt név a magyar underground élvonalából, akik már most telt házas klubokat visznek.', '2026. szept. 26.'],
+  ['Zene', 'NuMetal', 'A nu metal reneszánsza: miért hallgatja újra a Z generáció?', 'Baggy nadrág, hétsávos gitárok, TikTok-trendek. Utánajártunk, honnan jön a hullám.', '2026. szept. 25.'],
+  ['Fashion', null, 'Baggy farmer, vastag talp: ez az őszi utcai uniformis', 'A streetwear idei őszi alapdarabjai, és hogy hol szerezheted be őket pénztárcabarát áron.', '2026. szept. 25.'],
+  ['Sport', 'Foci', 'Őszi káosz az NB I-ben: meglepetések a tabella élén', 'Két forduló, három edzőváltás. Összeszedtük, mi történt a hétvégén a hazai élvonalban.', '2026. szept. 24.'],
+  ['Sport', 'Darts', 'Villámgyors kiszállók: a magyar darts új generációja', 'Fiatal játékosok, egyre komolyabb eredmények. Kik lehetnek ott a következő nagy tornán?', '2026. szept. 24.'],
+  ['Zene', 'Több', 'Fesztiválösszegzés: a nyár öt legjobb koncertje', 'Pogó, eső, hajnalig tartó szettek. Ezeket a bulikat még jövő nyáron is emlegetni fogjuk.', '2026. szept. 23.'],
+  ['Mix', null, 'Így építs otthoni stúdiót 150 ezer forintból', 'Hangkártya, mikrofon, monitor és szoftver: egy belépő szintű setup, amivel tényleg lehet dolgozni.', '2026. szept. 23.'],
+  ['Sport', 'Több', 'Streetball-bajnokság a Városligetben – képekben', 'Harminckét csapat, egy pálya, egész napos hangulat. Ilyen volt a hétvégi 3x3-as torna.', '2026. szept. 22.'],
+  ['Zene', 'Metalcore', 'Budapesti metalcore-koncertek ősszel: a teljes lista', 'Minden fontos dátum egy helyen, októbertől decemberig, jegyárakkal és helyszínekkel.', '2026. szept. 22.'],
+  ['Fashion', null, 'Sneaker drop naptár: októberi megjelenések', 'Collabok, retro újrakiadások és egy-két meglepetés. Ezekre érdemes ébresztőt állítani.', '2026. szept. 21.'],
+  ['Sport', 'NBA', 'Keleti főcsoport előzetes: ki állíthatja meg a favoritot?', 'Csapatról csapatra végigvettük a Keletet: ki erősített, ki gyengült, és ki a sötét ló.', '2026. szept. 21.'],
+  ['Zene', 'NuMetal', 'Öt nu metal album, ami ma is ugyanúgy üt', 'Klasszikusok és kevésbé ismert kedvencek, amiket érdemes újra végighallgatni.', '2026. szept. 20.'],
+  ['Sport', 'Forma1', 'Szezonzáró hajrá: ki viszi el a Forma–1-es világbajnoki címet?', 'Öt futam van hátra, és a pontverseny még mindig nyitott. Megnéztük, kinek kedvez a hátralévő pályák sora.', '2026. szept. 21.'],
+].map((p, i) => ({ id: i + 1, group: p[0], sub: p[1], title: p[2], lead: p[3], date: p[4] }));
+
+const BODY = {
+  Zene: {
+    paras: [
+      'Az elmúlt hetekben alig lehetett máshol olvasni erről a témáról, és nem véletlenül. A rajongók már hónapok óta találgattak, a zenekar pedig ügyesen adagolta az apró jeleket: egy-egy rejtélyes poszt, egy rövid stúdióvideó, néhány másodpercnyi hangminta.',
+      'Az első benyomás egyértelmű: a hangzás egyszerre ismerős és friss. A gitárok vastagok és lehangoltak, a dobok pontosak, de a refrénben ott van az a dallam, ami elsőre is beragad a fülbe. Látszik, hogy a produceri munkára ezúttal sokkal több idő jutott.',
+      'Koncerten ez a fajta anyag működik igazán. Aki látta már élőben a csapatot, tudja, hogy a stúdióverzió csak a kiindulópont: a színpadon minden gyorsabb, hangosabb és kiszámíthatatlanabb lesz.',
+      'A megjelenés dátuma egyelőre nem végleges, de ha a korábbi menetrendet nézzük, az ősz végén jöhet a teljes anyag. Addig marad a repeat gomb, és persze a találgatás, hogy milyen dalok kerülnek még fel a lemezre.',
+    ],
+    quote: 'A színpadon minden gyorsabb, hangosabb és kiszámíthatatlanabb lesz.',
+  },
+  Sport: {
+    paras: [
+      'A szezon eleje mindig a kérdésekről szól: ki erősített okosan, ki hibázott a nyári piacon, és kinek a formája lesz a legnagyobb meglepetés. Idén ezekre a kérdésekre már az első hetekben érkeztek érdekes válaszok.',
+      'A számok önmagukban is beszédesek, de a meccseken látszik igazán a változás. Több a bátorság, gyorsabbak a döntések, és a kulcsjátékosok láthatóan jobb fizikai állapotban kezdték az évet, mint egy szezonnal korábban.',
+      'Persze a korai eredményekből könnyű túl messzemenő következtetéseket levonni. A sérülések, a sűrű menetrend és a csapatkémia még sok mindent átírhat, és a valódi erőviszonyok általában csak a szezon közepére rajzolódnak ki.',
+      'A következő hetekben több rangadó is jön, ezek pedig sokat elárulnak majd arról, hogy a jó kezdés tartós forma-e, vagy csak egy szerencsés sorozat. Mi ott leszünk, és mindenről beszámolunk.',
+    ],
+    quote: 'A valódi erőviszonyok általában csak a szezon közepére rajzolódnak ki.',
+  },
+  Fashion: {
+    paras: [
+      'Az utcai divat mindig egy lépéssel a kifutók előtt jár, és ez idén ősszel is így van. A kényelem és a nagyvonalú szabások továbbra is uralják a képet, de egyre több a merészebb anyag- és színkombináció.',
+      'A legfontosabb darabok nem feltétlenül a legdrágábbak. Egy jól megválasztott farmer, egy tartós cipő és néhány alapréteg bőven elég ahhoz, hogy a szett működjön, a többi pedig a kiegészítőkön és a személyes stíluson múlik.',
+      'Egyre többen vásárolnak használtan is, és ez nemcsak a pénztárcának jó. A vintage boltok és az online piacterek valóságos kincsesbányák, ha van türelmed keresgélni, és nem csak a legújabb drop érdekel.',
+      'Hogy mi marad meg a szezon végére, azt még nehéz megmondani. Az viszont biztos, hogy a jól összerakott, laza szettek nem mennek ki a divatból, bármit is mondanak a trendjelentések.',
+    ],
+    quote: 'A jól összerakott, laza szettek nem mennek ki a divatból.',
+  },
+  Mix: {
+    paras: [
+      'A technológiai újdonságok világában könnyű elveszni a marketingben. Minden évben jön egy újabb „forradalmi” funkció, de a valódi kérdés mindig ugyanaz: mennyit ér mindez a hétköznapi használatban?',
+      'Hosszabb ideig teszteltük a témát, és igyekeztünk úgy használni, ahogy bárki más tenné: munkára, szórakozásra, utazás közben. Voltak kellemes meglepetések, és akadt néhány kompromisszum is, amivel számolni kell.',
+      'Az ár-érték arány itt is kulcskérdés. Aki a legújabbat akarja, annak megéri, de sokaknak egy előző generációs vagy középkategóriás megoldás is bőven elég lesz, lényegesen kevesebb pénzért.',
+      'Összességében a fejlődés egyértelmű, és néhány év múlva valószínűleg teljesen természetes lesz, ami ma még újdonságnak számít. Addig viszont érdemes alaposan átgondolni, mire van valóban szükséged.',
+    ],
+    quote: 'A valódi kérdés mindig ugyanaz: mennyit ér mindez a hétköznapi használatban?',
+  },
+};
+
+const ACCENTS = [
+  { label: 'Piros', v: '#ec3013' },
+  { label: 'Kék', v: 'oklch(0.55 0.23 262)' },
+  { label: 'Lila', v: 'oklch(0.52 0.25 300)' },
+  { label: 'Fekete', v: '#201e1d' },
+];
+const CAT_COLORS = {
+  Zene: ['#201e1d', '#fff'],
+  Sport: ['oklch(0.55 0.23 262)', '#fff'],
+  Fashion: ['oklch(0.6 0.25 345)', '#fff'],
+  Mix: ['oklch(0.88 0.21 128)', '#201e1d'],
+};
+
+// A dizájn alapbeállításai. Az oldal címéhez ?tweaks-t írva megjelenik a Tweaks panel (csak kipróbálásra, nem ment).
+const SITE_TWEAKS = {
+  "headerStyle": "Fekete",
+  "topBar": "Be",
+  "stripeOn": "Ki",
+  "titleSz": "Közepes",
+  "density": "Normál",
+  "leadOn": "Be",
+  "badgePos": "Képen",
+  "accent": "oklch(0.52 0.25 300)",
+  "catMode": "Színes",
+  "bStyle": "Kitöltött",
+  "bShape": "Lekerekített",
+  "bOp": 100,
+  "bSize": "Közepes",
+  "cols": 3,
+  "heroLayout": "1 + 3",
+  "images": "Színes",
+  "cardStyle": "Csupasz",
+  "sidebarSide": "Jobb",
+  "ruleColor": "Szürke",
+  "ruleW": 1,
+  "ruleOp": 70
+};
+const TWEAK_STORE = 'nuflow-v2-tweaks';
+const TWEAK_KEYS = ['headerStyle', 'topBar', 'stripeOn', 'titleSz', 'density', 'leadOn', 'badgePos', 'accent', 'catMode', 'bStyle', 'bShape', 'bOp', 'bSize', 'cols', 'heroLayout', 'images', 'cardStyle', 'sidebarSide', 'ruleColor', 'ruleW', 'ruleOp'];
+
+class Component extends DCLogic {
+  state = {
+    w: typeof window !== 'undefined' ? window.innerWidth : 1280,
+    group: null, sub: null, hover: null, mobileOpen: false, tweaksOpen: false, scrolled: false, searchOpen: false, q: '', tick: 0, article: null,
+    headerStyle: this.props.headerStyle ?? 'Világos', topBar: this.props.topBar ?? 'Be', stripeOn: this.props.stripeOn ?? 'Be',
+    titleSz: this.props.titleSz ?? 'Nagy', density: this.props.density ?? 'Normál', leadOn: this.props.leadOn ?? 'Be', badgePos: this.props.badgePos ?? 'Képen',
+    accent: this.props.accent ?? '#ec3013',
+    catMode: this.props.catMode ?? 'Színes',
+    bStyle: this.props.bStyle ?? 'Kitöltött', bShape: this.props.bShape ?? 'Szögletes', bOp: this.props.bOp ?? 100, bSize: this.props.bSize ?? 'Közepes',
+    cols: this.props.cols ?? 3,
+    heroLayout: this.props.heroLayout ?? '1 + 3',
+    images: this.props.images ?? 'Fekete-fehér',
+    cardStyle: this.props.cardStyle ?? 'Árnyékos', hoverCard: null,
+    sidebarSide: this.props.sidebarSide ?? 'Jobb', ruleColor: this.props.ruleColor ?? 'Tinta', ruleW: this.props.ruleW ?? 2, ruleOp: this.props.ruleOp ?? 100,
+  };
+  constructor(props) {
+    super(props);
+    try {
+      const saved = SITE_TWEAKS;
+      TWEAK_KEYS.forEach(k => { if (saved[k] !== undefined) this.state[k] = saved[k]; });
+    } catch (e) {}
+  }
+  componentDidUpdate() {
+    const out = {};
+    TWEAK_KEYS.forEach(k => { out[k] = this.state[k]; });
+    const str = JSON.stringify(out);
+    if (str !== this._lastSaved) { this._lastSaved = str;  }
+  }
+  componentDidMount() {
+    Promise.resolve(NF_STORE).then(m => { this._store = m; return m.loadPosts(); }).then(r => {
+      if (!r || !r.posts) return;
+      const hu = this._store.huDate;
+      POSTS = r.posts.map((p, i) => ({ ...p, _i: i, iso: p.date, date: hu(p.date) }))
+        .sort((a, b) => (b.iso || '').localeCompare(a.iso || '') || a._i - b._i);
+      const h = /post-(\d+)/.exec(location.hash);
+      const art = h && POSTS.some(p => p.id === +h[1]) ? +h[1] : (POSTS.some(p => p.id === this.state.article) ? this.state.article : null);
+      this.setState({ postsSrc: r.source, article: art });
+      if (h) window.scrollTo({ top: 0 });
+    }).catch(() => {});
+    this.onResize = () => this.setState({ w: window.innerWidth });
+    this.onScroll = () => { const y = window.scrollY, was = this.state.scrolled; const sc = was ? y > 10 : y > 80; if (sc !== was) this.setState({ scrolled: sc }); };
+    window.addEventListener('resize', this.onResize);
+    window.addEventListener('scroll', this.onScroll, { passive: true });
+    this.timer = setInterval(() => this.setState(s => ({ tick: s.tick + 1 })), 4000);
+  }
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize);
+    window.removeEventListener('scroll', this.onScroll);
+    clearInterval(this.timer);
+  }
+
+  nav(group, sub, e) {
+    if (e) e.preventDefault();
+    this.setState({ group, sub, hover: null, mobileOpen: false, q: '', searchOpen: false, article: null }); this.clearHash();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+  openPost(id, e) {
+    if (e) e.preventDefault();
+    try { history.replaceState(null, '', '#post-' + id); } catch (err) {}
+    this.setState({ article: id, hover: null, hoverCard: null, mobileOpen: false, searchOpen: false });
+    window.scrollTo({ top: 0 });
+  }
+  clearHash() { try { if (location.hash) history.replaceState(null, '', location.pathname + location.search); } catch (err) {} }
+  badge(group) {
+    const s = this.state;
+    const c = s.catMode === 'Mono' ? s.accent : s.catMode === 'Fekete' ? '#201e1d' : CAT_COLORS[group][0];
+    const op = s.bOp;
+    const tint = 'color-mix(in srgb, ' + c + ' ' + op + '%, #fff)';
+    const deep = 'color-mix(in srgb, ' + c + ' 72%, #000)';
+    if (s.bStyle === 'Körvonalas') return { bg: 'transparent', fg: op < 60 ? tint : deep, border: '2px solid ' + tint };
+    if (s.bStyle === 'Lágy') return { bg: 'color-mix(in srgb, ' + c + ' ' + Math.round(op * 0.2) + '%, #fff)', fg: deep, border: '0' };
+    const baseFg = s.catMode === 'Színes' ? CAT_COLORS[group][1] : '#fff';
+    const lightCat = baseFg !== '#fff';
+    return { bg: tint, fg: op < 60 || (lightCat && op < 100) ? deep : baseFg, border: '0' };
+  }
+  catColor(group) {
+    if (this.state.catMode === 'Mono') return [this.state.accent, '#fff'];
+    return CAT_COLORS[group];
+  }
+
+  renderVals() {
+    const s = this.state;
+    const isMobile = s.w < 900, isTablet = s.w < 1100;
+    const ink = 'var(--color-text)';
+    const dark = s.headerStyle === 'Fekete';
+    const barInk = dark ? '#fff' : ink;
+
+    const menu = MENU.map(m => {
+      const apx = s.article ? POSTS.find(p => p.id === s.article) : null;
+      const curGroup = apx ? apx.group : s.group;
+      const active = m.key === 'home' ? !curGroup : curGroup === m.key;
+      const dot = m.key === 'home' ? ink : this.catColor(m.key)[0];
+      return {
+        label: m.label, hasSub: m.subs.length > 0, open: s.hover === m.key && m.subs.length > 0,
+        color: active ? s.accent : ink, bar: active ? s.accent : 'transparent',
+        bg: active ? s.accent : s.hover === m.key ? (dark ? 'var(--color-neutral-800)' : 'var(--color-neutral-200)') : 'transparent',
+        fg: active ? '#fff' : barInk, dot, caret: s.hover === m.key ? 'rotate(180deg)' : 'none',
+        onEnter: () => { clearTimeout(this._menuT); if (this.state.hover !== m.key) this.setState({ hover: m.key }); },
+        onLeave: () => { clearTimeout(this._menuT); this._menuT = setTimeout(() => this.setState({ hover: null }), 200); },
+        onClick: e => this.nav(m.key === 'home' ? null : m.key, null, e),
+        subs: m.subs.map((sub, i) => ({
+          label: sub === 'Több' ? 'Több..' : sub, dot, border: i ? '2px solid var(--color-neutral-200)' : '0',
+          count: POSTS.filter(p => p.group === m.key && p.sub === sub).length + ' poszt',
+          onClick: e => this.nav(m.key, sub, e),
+        })),
+      };
+    });
+
+    const qq = s.q.trim().toLowerCase();
+    const list = POSTS.filter(p => (!s.group || (p.group === s.group && (!s.sub || p.sub === s.sub))) && (!qq || (p.title + ' ' + p.lead).toLowerCase().includes(qq)));
+    const bw = s.images === 'Fekete-fehér' ? 'grayscale(1)' : 'none';
+    const dec = p => {
+      const b = this.badge(p.group);
+      return { ...p, bg: b.bg, fg: b.fg, bBorder: b.border, hasImg: !!p.image, noImg: !p.image, image: p.image || '', imgEl: p.image ? React.createElement('img', { src: p.image, alt: p.imageCaption || p.title || '', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', display: 'block' } }) : null, label: p.sub && p.sub !== 'Több' ? p.sub : p.group, filter: bw, slotId: 'post-' + p.id, onOpen: e => this.openPost(p.id, e) };
+    };
+    const ruleBase = { Tinta: 'var(--color-text)', Akcent: s.accent, 'Szürke': 'var(--color-neutral-500)' }[s.ruleColor];
+    const ruleC = 'color-mix(in srgb, ' + ruleBase + ' ' + s.ruleOp + '%, transparent)';
+    const rule = s.ruleW + 'px solid ' + ruleC;
+    const sideN = s.heroLayout === '1 + 3' ? 3 : 2;
+    const hero = list[0] ? dec(list[0]) : null;
+    const heroSide = list.slice(1, 1 + sideN).map((p, i) => ({ ...dec(p), border: i === 0 && !isMobile ? '0' : rule }));
+    const cs = s.cardStyle;
+    const card = p => {
+      const h = s.hoverCard === p.id;
+      const shadow = cs === 'Árnyékos' ? (h ? '0 18px 40px -12px rgba(32,30,29,0.35), 0 4px 10px rgba(32,30,29,0.08)' : '0 6px 20px -8px rgba(32,30,29,0.22), 0 1px 3px rgba(32,30,29,0.06)')
+        : cs === 'Blokk' ? (h ? '9px 9px 0 ' + s.accent : '5px 5px 0 var(--color-text)')
+        : cs === 'Csupasz' && h ? '0 0 0 12px #fff, 0 18px 40px -8px rgba(32,30,29,0.3), 0 4px 10px 8px rgba(32,30,29,0.06)' : 'none';
+      const lift = cs === 'Árnyékos' || cs === 'Csupasz' ? 'translateY(-4px)' : cs === 'Blokk' ? 'translate(-3px, -3px)' : 'none';
+      return { ...dec(p), cShadow: shadow, cTransform: h ? lift : 'none',
+        cBg: '#fff',
+        onEnter: () => this.setState({ hoverCard: p.id }), onLeave: () => this.setState({ hoverCard: null }) };
+    };
+    const gridPosts = list.slice(1 + sideN).map(card);
+    const ap = s.article ? POSTS.find(p => p.id === s.article) : null;
+    let art = {}, related = [], fresh = [];
+    if (ap) {
+      const b = BODY[ap.group] || BODY.Mix;
+      const blocks = ap.body && ap.body.length ? ap.body : [...b.paras.slice(0, 2).map(x => ({ type: 'p', text: x })), { type: 'quote', text: b.quote }, ...b.paras.slice(2).map(x => ({ type: 'p', text: x }))];
+      const words = (ap.lead + ' ' + blocks.map(x => nfStrip(x.text).replace(/^\s*##\s+/gm, '')).join(' ')).split(/\s+/).length;
+      art = { ...dec(ap), imageCaption: ap.imageCaption || '', hasCap: false,
+        blocks: blocks.map(x => ({ ...x, text: x.type === 'p' ? (x.text || '') : nfStrip(x.text), parts: x.type === 'p' ? nfRich(x.text) : [], isP: x.type === 'p', isH: x.type === 'h2', isQ: x.type === 'quote',
+          isImg: x.type === 'img' && !!x.src, isYt: x.type === 'youtube' && !!x.id, ytEmbed: x.type === 'youtube' && !!x.id && location.protocol !== 'file:', ytLocal: x.type === 'youtube' && !!x.id && location.protocol === 'file:', ytWatch: 'https://www.youtube.com/watch?v=' + (x.id || ''), ytThumbEl: x.id ? React.createElement('img', { src: 'https://i.ytimg.com/vi/' + x.id + '/hqdefault.jpg', alt: 'YouTube videó', style: { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover', opacity: 0.85 } }) : null,  ytSrc: 'https://www.youtube.com/embed/' + (x.id || '') + '?rel=0',
+          caption: x.caption || '', hasCap: false,
+          imgEl: x.type === 'img' && x.src ? React.createElement('img', { src: x.src, alt: x.caption || ap.title || '', style: { display: 'block', width: '100%', height: 'auto', filter: bw } }) : null })),
+        crumb: ['Home', ap.group, ap.sub].filter(Boolean).join(' / '),
+        readTime: Math.max(1, Math.round(words / 180)) + ' perc olvasás' };
+      const same = POSTS.filter(p => p.id !== ap.id && p.group === ap.group);
+      const rest = POSTS.filter(p => p.id !== ap.id && p.group !== ap.group);
+      related = same.concat(rest).slice(0, 3).map(card);
+      fresh = POSTS.filter(p => p.id !== ap.id).slice(0, 5).map(dec);
+    }
+    const colsN = isMobile ? (s.w < 600 ? 1 : 2) : isTablet ? Math.min(2, s.cols) : s.cols;
+
+    const opt = (key, label, text, value, extra = {}) => {
+      const on = s[key] === value;
+      return {
+        label, text, flex: extra.swatch ? '0 0 40px' : '1 1 auto',
+        bg: extra.swatch || (on ? '#000' : '#fff'), fg: on ? '#fff' : ink,
+        border: on ? '#000' : 'var(--color-neutral-400)',
+        ring: extra.swatch && on ? '0 0 0 2px #fff inset' : 'none',
+        onClick: () => this.setState({ [key]: value }),
+      };
+    };
+    const tweakGroups = [
+      { label: 'Akcentszín', options: ACCENTS.map(a => opt('accent', a.label, '', a.v, { swatch: a.v })) },
+      { label: 'Fejléc', options: ['Világos', 'Fekete'].map(v => opt('headerStyle', v, v, v)) },
+      { label: 'Felső hírsáv', options: ['Be', 'Ki'].map(v => opt('topBar', v, v, v)) },
+      { label: 'Kategória színcsík', options: ['Be', 'Ki'].map(v => opt('stripeOn', v, v, v)) },
+      { label: 'Oldalcím mérete', options: ['Nagy', 'Közepes', 'Kicsi'].map(v => opt('titleSz', v, v, v)) },
+      { label: 'Térköz', options: ['Tágas', 'Normál', 'Kompakt'].map(v => opt('density', v, v, v)) },
+      { label: 'Bevezető szöveg', options: ['Be', 'Ki'].map(v => opt('leadOn', v, v, v)) },
+      { label: 'Címke helye', options: ['Képen', 'Cím felett'].map(v => opt('badgePos', v, v, v)) },
+      { label: 'Friss hírek oldalsáv', options: ['Bal', 'Jobb'].map(v => opt('sidebarSide', v, v, v)) },
+      { label: 'Vonalak színe', options: ['Tinta', 'Akcent', 'Szürke'].map(v => opt('ruleColor', v, v, v)) },
+      { label: 'Vonalak vastagsága', options: [1, 2, 3, 4].map(v => opt('ruleW', v + ' px', v + ' px', v)) },
+      { label: 'Vonalak halványítása', options: [[100, '0%'], [70, '30%'], [40, '60%'], [20, '80%']].map(([v, l]) => opt('ruleOp', 'Halványítás ' + l, l, v)) },
+      { label: 'Címkék színe', options: [['Színes', 'Kategória'], ['Mono', 'Akcent'], ['Fekete', 'Fekete']].map(([v, l]) => opt('catMode', l, l, v)) },
+      { label: 'Címkék stílusa', options: ['Kitöltött', 'Körvonalas', 'Lágy'].map(v => opt('bStyle', v, v, v)) },
+      { label: 'Címkék formája', options: ['Szögletes', 'Lekerekített', 'Kapszula'].map(v => opt('bShape', v, v, v)) },
+      { label: 'Címkék halványítása', options: [[100, '0%'], [75, '25%'], [50, '50%']].map(([v, l]) => opt('bOp', 'Címke halványítás ' + l, l, v)) },
+      { label: 'Címkék mérete', options: ['Kicsi', 'Közepes', 'Nagy'].map(v => opt('bSize', v, v, v)) },
+      { label: 'Hero elrendezés', options: ['1 + 3', '1 + 2'].map(v => opt('heroLayout', v, v, v)) },
+      { label: 'Rács oszlopok', options: [2, 3, 4].map(v => opt('cols', v + ' oszlop', String(v), v)) },
+      { label: 'Kártyák', options: ['Árnyékos', 'Blokk', 'Keretes', 'Csupasz'].map(v => opt('cardStyle', v, v, v)) },
+      { label: 'Képek', options: ['Fekete-fehér', 'Színes'].map(v => opt('images', v, v, v)) },
+    ];
+
+    const pageTitle = qq ? 'Keresés' : s.sub ? (s.sub === 'Több' ? 'Több ' + s.group.toLowerCase() : s.sub) : (s.group || 'Friss');
+    return {
+      accent: s.accent, isDesktop: !isMobile, isMobile, menu, isDraft: s.postsSrc === 'draft',
+      isList: !ap, isArticle: !!ap, art, related, fresh,
+      artCols: isMobile ? 'minmax(0, 1fr)' : s.sidebarSide === 'Bal' ? `minmax(0, ${isTablet ? 260 : 340}px) minmax(0, 1fr)` : `minmax(0, 1fr) minmax(0, ${isTablet ? 260 : 340}px)`,
+      artGap: isTablet ? '32px' : '48px',
+      sideOrder: isMobile || s.sidebarSide === 'Jobb' ? 2 : 0, sidePos: isMobile ? 'static' : 'sticky',
+      freshCols: isMobile ? '120px minmax(0, 1fr)' : 'minmax(0, 2fr) minmax(0, 3fr)',
+      relCols: 'repeat(' + (s.w < 600 ? 1 : isMobile ? 2 : 3) + ', minmax(0, 1fr))',
+      goBack: e => { e.preventDefault(); this.setState({ article: null }); this.clearHash(); window.scrollTo({ top: 0 }); },
+      openTicker: e => this.openPost((POSTS[s.tick % Math.max(1, Math.min(5, POSTS.length))] || {}).id, e),
+      today: new Date().toLocaleDateString('hu-HU', { year: 'numeric', month: 'long', day: 'numeric', weekday: isMobile ? undefined : 'long' }),
+      ticker: (POSTS[s.tick % Math.max(1, Math.min(5, POSTS.length))] || {}).title,
+      topH: s.scrolled || s.topBar === 'Ki' ? '0px' : '36px',
+      barBg: dark ? '#000' : '#fff', barFg: barInk, barMuted: dark ? 'var(--color-neutral-400)' : 'var(--color-neutral-700)',
+      showStripe: s.stripeOn === 'Be',
+      bScale: { Kicsi: 0.85, 'Közepes': 1, Nagy: 1.25 }[s.bSize],
+      bRadius: { 'Szögletes': '0px', 'Lekerekített': '4px', Kapszula: '999px' }[s.bShape],
+      spacerH: ((s.topBar === 'Ki' ? 0 : 36) + (isMobile ? 64 : 84) + s.ruleW + (s.stripeOn === 'Be' ? 4 : 0)) + 'px',
+      titleSize: { Nagy: 'clamp(40px, 7vw, 88px)', 'Közepes': 'clamp(34px, 5vw, 64px)', Kicsi: 'clamp(28px, 3.5vw, 44px)' }[s.titleSz],
+      gridGap: { 'Tágas': '56px 40px', 'Normál': '40px 28px', Kompakt: '24px 16px' }[s.density],
+      showLead: s.leadOn === 'Be', badgeOnImage: s.badgePos === 'Képen', badgeAbove: s.badgePos === 'Cím felett',
+      mainH: s.scrolled || isMobile ? '64px' : '84px',
+      markSize: s.scrolled || isMobile ? '36px' : '46px', markFont: s.scrolled || isMobile ? '22px' : '28px',
+      wordSize: s.scrolled || isMobile ? '26px' : '34px', showTagline: !s.scrolled && !isMobile,
+      logoH: s.scrolled || isMobile ? '40px' : '52px',
+      logoOnLight: s.headerStyle !== 'Fekete', logoOnDark: s.headerStyle === 'Fekete',
+      stripe: ['Zene', 'Sport', 'Fashion', 'Mix'].map(g => this.catColor(g)[0]),
+      searchOpen: s.searchOpen, q: s.q, onQ: e => this.setState({ q: e.target.value }),
+      toggleSearch: () => this.setState({ searchOpen: !s.searchOpen, q: s.searchOpen ? '' : s.q, mobileOpen: false }),
+      searchBg: s.searchOpen ? '#000' : 'transparent', searchFg: s.searchOpen ? '#fff' : barInk,
+      searchMl: isMobile ? 'auto' : '0',
+      mobileOpen: s.mobileOpen, mobileClosed: !s.mobileOpen, showMobileMenu: isMobile && s.mobileOpen,
+      burgerBg: s.mobileOpen ? '#000' : 'transparent', burgerFg: s.mobileOpen ? '#fff' : barInk,
+      toggleMobile: () => this.setState({ mobileOpen: !s.mobileOpen, searchOpen: false }),
+      goHome: e => this.nav(null, null, e), noop: e => e.preventDefault(),
+      crumb: qq ? 'Találatok: „' + s.q.trim() + '”' : s.group ? ['Home', s.group, s.sub].filter(Boolean).join(' / ') : 'Home / Legújabb posztok',
+      pageTitle, postCount: list.length + ' poszt',
+      hasHero: !!hero, hero: hero || {}, heroSide, hasGrid: gridPosts.length > 0, gridPosts,
+      heroCols: isMobile || heroSide.length === 0 ? 'minmax(0, 1fr)' : 'minmax(0, 7fr) minmax(0, 5fr)',
+      heroGapR: isMobile ? '0' : '28px', heroGapL: isMobile ? '0' : '28px', heroGapB: isMobile ? '8px' : '0',
+      heroDivider: isMobile ? '0' : rule, rule, ruleW: s.ruleW + 'px', ruleC,
+      gridCols: `repeat(${colsN}, minmax(0, 1fr))`,
+      cardBorder: s.cardStyle === 'Keretes' || s.cardStyle === 'Blokk' ? '2px solid var(--color-text)' : s.cardStyle === 'Árnyékos' ? '1px solid var(--color-neutral-200)' : '0',
+      cardPad: s.cardStyle === 'Csupasz' ? '0' : '12px 12px 20px',
+      showTweaks: /[?&]tweaks\b/.test(location.search), tweaksOpen: s.tweaksOpen, toggleTweaks: () => this.setState({ tweaksOpen: !s.tweaksOpen }),
+      tweakBtnBg: s.tweaksOpen ? '#000' : s.accent, tweakGroups,
+    };
+  }
+}
+</script>
+</body>
+</html>
