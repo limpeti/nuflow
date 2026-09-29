@@ -159,6 +159,15 @@ button:focus-visible, a:focus-visible, label:focus-within { outline: 2px solid #
         </div>
 
         <label style="display: flex; flex-direction: column; gap: 8px;">
+          <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-neutral-700);">URL név</span>
+          <div style="display: flex; align-items: center; height: 44px; border: 2px solid {{ slugBorder }}; background: #fff; box-sizing: border-box;">
+            <span style="padding-left: 14px; font-size: 14px; font-weight: 600; color: var(--color-neutral-700); white-space: nowrap;">/cikk/</span>
+            <input value="{{ slugVal }}" onChange="{{ onSlug }}" placeholder="{{ slugPh }}" style="flex: 1; min-width: 0; height: 40px; border: 0; padding: 0 14px 0 2px; font-size: 15px; background: transparent;">
+          </div>
+          <span style="font-size: 13px; line-height: 1.5; color: {{ slugNoteColor }};">{{ slugNote }}</span>
+        </label>
+
+        <label style="display: flex; flex-direction: column; gap: 8px;">
           <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-neutral-700);">Bevezető (lead)</span>
           <textarea value="{{ d.lead }}" onChange="{{ onLead }}" rows="3" placeholder="1–2 mondat, ez látszik a kártyákon" style="border: 2px solid var(--color-text); background: #fff; padding: 12px 14px; font-size: 16px; line-height: 1.5; resize: vertical; box-sizing: border-box; width: 100%;"></textarea>
         </label>
@@ -335,6 +344,7 @@ const huDate = iso => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || ''); re
 const ytId = url => { let s = (url || '').trim(); const src = /src=["']([^"']+)["']/i.exec(s); if (src) s = src[1]; if (/^[\w-]{11}$/.test(s)) return s; const m = s.match(/(?:youtu\.be\/|youtube(?:-nocookie)?\.com\/(?:watch\?(?:.*&)?v=|embed\/|shorts\/|live\/|v\/))([\w-]{11})/); return m ? m[1] : ''; };
 const todayIso = () => { const d = new Date(); return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'); };
 const clone = o => JSON.parse(JSON.stringify(o));
+const slugify = s => (s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80).replace(/-+$/, '');
 
 class Component extends DCLogic {
   state = { fsVal: '120', fsUnit: '%', posts: [], loaded: false, source: '', selId: null, draft: null, isNew: false, dirty: false, q: '', cat: 'Mind', w: typeof window !== 'undefined' ? window.innerWidth : 1280, toast: '' };
@@ -360,13 +370,13 @@ class Component extends DCLogic {
     if (!this.guard()) return;
     const p = this.state.posts.find(x => x.id === id);
     if (!p) return;
-    this.setState({ selId: id, draft: { sub: '', image: '', body: [], ...clone(p) }, isNew: false, dirty: false });
+    this.setState({ selId: id, draft: { sub: '', image: '', body: [], ...clone(p) }, isNew: false, dirty: false, slugAuto: false });
     window.scrollTo({ top: 0 });
   }
   newPost() {
     if (!this.guard()) return;
     const id = Math.max(0, ...this.state.posts.map(p => p.id || 0)) + 1;
-    this.setState({ selId: id, isNew: true, dirty: false, draft: { id, group: 'Zene', sub: '', title: '', lead: '', date: todayIso(), image: '', body: [{ type: 'p', text: '' }] } });
+    this.setState({ selId: id, isNew: true, dirty: false, slugAuto: true, draft: { id, group: 'Zene', sub: '', title: '', slug: '', lead: '', date: todayIso(), image: '', body: [{ type: 'p', text: '' }] } });
     window.scrollTo({ top: 0 });
   }
   closeEditor() { if (!this.guard()) return; this.setState({ draft: null, selId: null, dirty: false, isNew: false }); }
@@ -451,7 +461,11 @@ class Component extends DCLogic {
     const d = this.state.draft;
     if (!d.title.trim()) { this.toast('Adj meg egy címet'); return; }
     const body = (d.body || []).filter(b => b.type === 'img' ? b.src : b.type === 'youtube' ? b.id : (b.text || '').trim());
+    let slug = (d.slug || '').replace(/^-+|-+$/g, '');
+    if (!slug && this.state.isNew) slug = slugify(d.title);
+    if (slug && this.state.posts.some(p => p.id !== d.id && p.slug === slug)) { this.toast('Ez az URL név már foglalt: ' + slug); return; }
     const clean = { ...d, title: d.title.trim(), lead: (d.lead || '').trim(), imageCaption: (d.imageCaption || '').trim(), body };
+    if (slug) clean.slug = slug; else delete clean.slug;
     const exists = this.state.posts.some(p => p.id === d.id);
     const posts = exists ? this.state.posts.map(p => p.id === d.id ? clean : p) : [clean, ...this.state.posts];
     this.setState({ draft: clean, isNew: false, dirty: false });
@@ -575,6 +589,8 @@ class Component extends DCLogic {
     }
 
     const saved = d && s.posts.some(p => p.id === d.id);
+    const slugClean = d ? (d.slug || '').replace(/^-+|-+$/g, '') : '';
+    const slugDup = !!(d && slugClean && s.posts.some(p => p.id !== d.id && p.slug === slugClean));
     return {
       ...ed,
       narrow,
@@ -589,8 +605,14 @@ class Component extends DCLogic {
       editorTitle: s.isNew ? 'Új poszt' : 'Poszt szerkesztése',
       statusText: s.dirty ? 'Nem mentett változások' : saved ? 'Mentve' : 'Még nincs mentve',
       statusColor: s.dirty ? '#c92408' : 'var(--color-neutral-700)',
-      canView: !!saved && !s.dirty, viewHref: d ? 'index.html#post-' + d.id : '#',
-      onTitle: e => this.upd({ title: e.target.value }),
+      canView: !!saved && !s.dirty, viewHref: d ? (d.slug && /^https?:$/.test(location.protocol) && /^\/admin(\.html)?$/.test(location.pathname) ? '/cikk/' + d.slug : 'index.html#post-' + d.id) : '#',
+      onTitle: e => { const v = e.target.value; this.upd(s.slugAuto ? { title: v, slug: slugify(v) } : { title: v }); },
+      onSlug: e => { const v = e.target.value.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[^a-z0-9-]+/g, '-').replace(/-{2,}/g, '-').slice(0, 80); this.setState(st => ({ draft: { ...st.draft, slug: v }, dirty: true, slugAuto: false })); },
+      slugVal: d ? (d.slug || '') : '',
+      slugPh: s.isNew ? 'automatikusan a címből' : 'üres = marad a régi link',
+      slugBorder: slugDup ? '#ec3013' : 'var(--color-text)',
+      slugNoteColor: slugDup ? '#c92408' : 'var(--color-neutral-700)',
+      slugNote: !d ? '' : slugDup ? 'Ez az URL név már foglalt, adj meg másikat.' : slugClean ? 'A cikk címe: /cikk/' + slugClean : s.isNew ? 'A címből automatikusan kitöltődik, de átírhatod.' : 'Nincs URL név, a régi link marad (#post-' + d.id + ').',
       onLead: e => this.upd({ lead: e.target.value }),
       onDate: e => this.upd({ date: e.target.value }),
       onHeroFile: e => { const f = e.target.files && e.target.files[0]; e.target.value = ''; this.takeImage(f, image => this.upd({ image })); },

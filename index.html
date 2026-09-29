@@ -2,6 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
+<script>window.NF_PRETTY_URLS = /^https?:$/.test(location.protocol) && /^\/(index\.html|cikk\/.*)?$/.test(location.pathname); if (window.NF_PRETTY_URLS) document.write('<base href="/">');</script>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <script src="./support.js"></script>
 </head>
@@ -139,12 +140,10 @@ button { font-family: inherit; }
   <main style="flex: 1; width: 100%; max-width: 1280px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px); box-sizing: border-box;">
    <sc-if value="{{ isList }}" hint-placeholder-val="{{ true }}">
 
-    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 36px 0 20px;">
+    <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding: 28px 0 16px;">
       <div style="display: flex; flex-direction: column; gap: 16px; flex: 1 1 auto; min-width: 0;">
         <span style="white-space: nowrap; font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--color-neutral-700);">{{ crumb }}</span>
-        <h1 style="margin: 0; font-family: var(--font-heading); font-weight: 900; font-size: {{ titleSize }}; line-height: 0.92; letter-spacing: -0.045em; text-transform: uppercase;">{{ pageTitle }}</h1>
       </div>
-      <span style="font-size: 14px; font-weight: 600; color: var(--color-neutral-700);">{{ postCount }}</span>
     </div>
     <div style="height: {{ ruleW }}; background: {{ ruleC }};"></div>
 
@@ -487,7 +486,7 @@ const SITE_TWEAKS = {
   "bShape": "Lekerekített",
   "bOp": 100,
   "bSize": "Közepes",
-  "cols": 3,
+  "cols": 4,
   "heroLayout": "1 + 3",
   "images": "Színes",
   "cardStyle": "Csupasz",
@@ -528,15 +527,17 @@ class Component extends DCLogic {
     if (str !== this._lastSaved) { this._lastSaved = str;  }
   }
   componentDidMount() {
+    this.onPop = () => { const id = this.routeFromUrl(); this.setState({ article: id }); this.setMeta(id != null ? POSTS.find(p => p.id === id) : null); window.scrollTo({ top: 0 }); };
+    window.addEventListener('popstate', this.onPop);
     Promise.resolve(NF_STORE).then(m => { this._store = m; return m.loadPosts(); }).then(r => {
       if (!r || !r.posts) return;
       const hu = this._store.huDate;
       POSTS = r.posts.map((p, i) => ({ ...p, _i: i, iso: p.date, date: hu(p.date) }))
         .sort((a, b) => (b.iso || '').localeCompare(a.iso || '') || a._i - b._i);
-      const h = /post-(\d+)/.exec(location.hash);
-      const art = h && POSTS.some(p => p.id === +h[1]) ? +h[1] : (POSTS.some(p => p.id === this.state.article) ? this.state.article : null);
+      const r0 = this.routeFromUrl();
+      const art = r0 != null ? r0 : (POSTS.some(p => p.id === this.state.article) ? this.state.article : null);
       this.setState({ postsSrc: r.source, article: art });
-      if (h) window.scrollTo({ top: 0 });
+      if (r0 != null) { window.scrollTo({ top: 0 }); this.setMeta(POSTS.find(p => p.id === r0)); }
     }).catch(() => {});
     this.onResize = () => this.setState({ w: window.innerWidth });
     this.onScroll = () => { const y = window.scrollY, was = this.state.scrolled; const sc = was ? y > 10 : y > 80; if (sc !== was) this.setState({ scrolled: sc }); };
@@ -557,11 +558,39 @@ class Component extends DCLogic {
   }
   openPost(id, e) {
     if (e) e.preventDefault();
-    try { history.replaceState(null, '', '#post-' + id); } catch (err) {}
+    this.setUrl(id);
     this.setState({ article: id, hover: null, hoverCard: null, mobileOpen: false, searchOpen: false });
     window.scrollTo({ top: 0 });
   }
-  clearHash() { try { if (location.hash) history.replaceState(null, '', location.pathname + location.search); } catch (err) {} }
+  clearHash() {
+    try {
+      if (window.NF_PRETTY_URLS) { if (location.pathname !== '/' || location.hash) history.pushState(null, '', '/'); }
+      else if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+    } catch (err) {}
+    this.setMeta(null);
+  }
+  routeFromUrl() {
+    const pm = /^\/cikk\/([^\/?#]+)/.exec(location.pathname);
+    if (pm) { const sl = decodeURIComponent(pm[1]).toLowerCase(); const p = POSTS.find(x => x.slug === sl); return p ? p.id : null; }
+    const h = /post-(\d+)/.exec(location.hash);
+    return h && POSTS.some(p => p.id === +h[1]) ? +h[1] : null;
+  }
+  setUrl(id) {
+    const p = POSTS.find(x => x.id === id);
+    try {
+      if (window.NF_PRETTY_URLS) history.pushState(null, '', p && p.slug ? '/cikk/' + encodeURIComponent(p.slug) : '/#post-' + id);
+      else history.replaceState(null, '', '#post-' + id);
+    } catch (err) {}
+    this.setMeta(p);
+  }
+  setMeta(p) {
+    if (this._baseTitle === undefined) this._baseTitle = document.title;
+    document.title = p ? p.title + ' | NuFlow' : this._baseTitle;
+    let m = document.querySelector('meta[name="description"]');
+    if (!m) { m = document.createElement('meta'); m.name = 'description'; document.head.appendChild(m); }
+    if (this._baseDesc === undefined) this._baseDesc = m.content || '';
+    m.content = p ? (p.lead || '') : this._baseDesc;
+  }
   badge(group) {
     const s = this.state;
     const c = s.catMode === 'Mono' ? s.accent : s.catMode === 'Fekete' ? '#201e1d' : CAT_COLORS[group][0];
