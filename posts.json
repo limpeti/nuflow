@@ -1,6 +1,39 @@
 {
   "posts": [
     {
+      "sub": "",
+      "image": "images/nike_reszveny_eses.webp",
+      "body": [
+        {
+          "type": "p",
+          "text": "A **Nike részvénye** augusztus végén 38,59 dollárra esett, 12 év mélypontjára, ami idén nagyjából 38 százalékos veszteség. A 2021. novemberi csúcs óta durván 78 százalékot veszített az értékéből, ez nagyjából 200 milliárd dollár piaci kapitalizáció."
+        },
+        {
+          "type": "h2",
+          "text": "Mi ment félre? Több dolog egyszerre."
+        },
+        {
+          "type": "p",
+          "text": "Rossz stratégia: A Nike sokáig a saját boltjaira és appjaira építette az eladásokat, ezzel viszont megsértette a hagyományos kereskedőit, és teret adott a riválisoknak.\n \n**Új versenytársak:** Az On, a Hoka és a New Balance komoly területeket szerzett a futó- és lifestyle-cipők piacán, miközben a Nike a megszokott Air Jordan és Dunk modellekre támaszkodott. \n\n**Kína:** Nyolc egymást követő negyedéve csökken az eladás, mert a fiatalok egyre inkább a hazai márkákat, például az Antát és a Li-Ninget választják. A cég ráadásul a márciusi jelentésben újabb ~20 százalékos kínai visszaesést jósolt a negyedikre, és a részvény a bejelentés után egy nap alatt több mint 15 százalékot zuhant.\n \n**Gyenge profit:** A leértékelések miatt a működési marzs körülbelül 9 százalékra esett, messze a hagyományos, közepes tizenkettes sáv alatt.\n \nAz új vezérigazgató, Elliott Hill 2024 októbere óta próbálja helyrehozni a céget, de a fordulat lassabb, mint amit a befektetők vártak. A 2026-os pénzügyi évben a bevétel 46 milliárd dollár körül stagnált.\n"
+        },
+        {
+          "type": "quote",
+          "text": "A vásárlók főleg a leárazásokban veszik észre a bajt"
+        },
+        {
+          "type": "p",
+          "text": "A cég nagy kedvezményekkel próbálta kiárusítani a készleteket, és a Nike a kereskedőkkel is újra építi a kapcsolatot, tehát a polcokon és a webshopokban a korábbinál többféle helyen bukkanhat fel a márka. Az On, a Hoka és a New Balance közben egyre erősebb alternatívát kínál a futócipőknél.\n\nA Nike nem tűnik el, de a fordulathoz idő, türelem és nyerő termékek kellenek. Ez sem befektetési tanács, csak a jelenlegi kép összefoglalása."
+        }
+      ],
+      "id": 20,
+      "group": "Fashion",
+      "title": "Nike a padlón: rég nem látott mélységekben",
+      "slug": "nike-reszveny-eses",
+      "lead": "A sportszergigász részvénye olyan mélyre zuhant, amilyet legutóbb 2014 körül láttunk. Az \"Just do it\" mostanában inkább \"Just hold on\".",
+      "date": "2026-09-30",
+      "imageCaption": ""
+    },
+    {
       "sub": "Hiphop",
       "image": "images/sisi_uj_dropp.jpg",
       "body": [
