@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/cikk/:slug*", "destination": "/index.html" }
+  ]
+}

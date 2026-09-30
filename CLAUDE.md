@@ -7,8 +7,7 @@ sima tárhelyre. A tulajdonos magyarul kommunikál; a felületen minden szöveg 
 
 - `index.html` – a portál. `admin.html` – posztkezelő. Mindkettő ún. „Design Component” formátum (lásd lent).
 - `posts.json` – `{ "posts": [...] }`, a posztok egyetlen forrása éles oldalon.
-- `nuflow-store.js` – ES modul: `loadPosts()` (IndexedDB piszkozat → `posts.json`), `setDraft`, `clearDraft`,
-  `loadFile`, `huDate`, `youtubeId`, valamint régi alkategória-nevek normalizálása (`SUB_ALIASES`).
+- A posztok betöltése/mentése (`NF_STORE`: IndexedDB piszkozat → `posts.json`, `setDraft`, `clearDraft`, `loadFile`, `huDate`, régi alkategória-nevek normalizálása) mindkét HTML logikájának elején van, szándékosan beágyazva (hogy file:// alatt is fusson). Ha módosítod, mindkét fájlban módosítsd.
 - `support.js` – a Design Component futtatókörnyezet (React 18-at CDN-ről tölt). **Ne módosítsd.**
 - `_ds/modernist-…/styles.css` – design tokenek (`--font-heading`, `--font-body`, `--color-*`). `_ds_bundle.js` – ne módosítsd.
 - `images/`, `assets/` – képek, logó (`nuflow-logo-v2.png`, sötét háttérre `nuflow-logo-v2-light.png`).
@@ -26,6 +25,8 @@ sima tárhelyre. A tulajdonos magyarul kommunikál; a felületen minden szöveg 
     { "type": "youtube", "url": "…", "id": "11-karakteres-videó-id" }
   ] }
 ```
+
+Bekezdés (`p`) jelölések: `## ` sor eleji alcím, `- ` / `1. ` lista, `**…**` félkövér, `[m=120%]…[/m]` / `[m=20px]…[/m]` betűméret (a régi `[nagy]` / `[kicsi]` is működik), üres sor = új bekezdés (értelmezés: `nfRich` / `nfInline`).
 
 Sorrend a portálon: `date` szerint csökkenő, azonos napon a tömb sorrendje. `sub` üres is lehet.
 
@@ -54,3 +55,14 @@ Sorrend a portálon: `date` szerint csökkenő, azonos napon a tömb sorrendje. 
 - A `posts.json`-t csak kérésre írd át (a tulajdonos az adminból exportálja).
 - Az `index.html` és az `admin.html` kategórialistája maradjon szinkronban.
 - Tesztelés helyi szerverrel: `npx serve` vagy `python -m http.server` (file:// alatt a `posts.json` nem töltődik be).
+
+## URL-ek (Vercel / Netlify)
+
+- Új posztok `slug` mezőt kapnak (admin: „URL név”, a címből generálva, átírható, egyedinek kell lennie).
+  Cikk címe: `/cikk/<slug>`. Slug nélküli (régi) posztok: `/#post-<id>`.
+- `vercel.json`: `/cikk/:slug*` → `/index.html` rewrite – Vercel ezzel szolgálja ki a cikkoldalakat (frissítés / közvetlen link).
+- `_redirects`: ugyanez Netlify-hoz (Vercel figyelmen kívül hagyja).
+- `index.html` fejében: `window.NF_PRETTY_URLS` (http/https alatt igaz) és `<base href="/">`, hogy a relatív
+  útvonalak (posts.json, images/, assets/, _ds/) `/cikk/…` alatt is működjenek. Ezért az oldal a domain gyökerében fut.
+- Útvonalkezelés: `routeFromUrl`, `setUrl`, `clearHash`, `setMeta` (böngészőfül címe + meta description), `popstate`.
+- Telepítés: GitHub repo → Vercel automatikus deploy (Framework: Other, build parancs nincs, output: a repo gyökere).
