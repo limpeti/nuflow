@@ -59,6 +59,19 @@
         {
           "type": "p",
           "text": "A **megújult formavilág** a Nike nemzetközi bejelentései alapján több klasszikus és új színállásban is debütál 2026 őszén és telén:\n\n- Air Force 1 Low '01 \"Triple White\" & \"Triple Black\": Az alapvető monokróm színek, amelyeknél a leginkább szembetűnő az új, letisztultabb forma.\n- Air Force 1 Low '01 \"Black/White\": Prémium, enyhén textúrázott fekete bőr felsőrész fehér talppal és kontrasztos fehér kontúrral a Nike logó (Swoosh) körül.\n- \"Cracked Leather\" Pack: Két olyan verzió, ahol a felsőrész teljesen textúrált, repedezett hatású bőrből készül, fekete vagy mentazöld részletekkel kombinálva."
+        },
+        {
+          "type": "p",
+          "text": "Az Air Force 1 Square Toe a klasszikus modell jól ismert arányait is változtatta, a látványos különbséget a cipő eleje jelenti, a megszokott, lekerekített orr helyére egy karakteres, szögletes forma került.\n"
+        },
+        {
+          "type": "img",
+          "src": "images/nike Air Force 1 Square Toe.webp",
+          "caption": "nike Air Force 1 Square Toe facelit"
+        },
+        {
+          "type": "p",
+          "text": "Az első ilyen modellek idén júniusban, a párizsi férfi divathéten tartott Nike-bemutatón tűntek fel, várhatóan 2027-ben droppolnak szélesebb kőrben."
         }
       ],
       "id": 17,
@@ -66,7 +79,8 @@
       "title": "A Nike 2026-ban komoly ráncfelvarrással frissítette az ikonikus Nike Air Force 1 '01 -et.",
       "lead": "A Nike 2026-ban egy hivatalos, komoly ráncfelvarrással (facelift) frissítette fel az ikonikus kosaras és utcai cipőt. Az új dizájn és struktúra a Nike Air Force 1 '01 nevet viseli, és a rajongók által leginkább imádott, korai 2000-es évekbeli sziluetthez tér vissza.",
       "date": "2026-09-28",
-      "imageCaption": ""
+      "imageCaption": "Nike Air Force 1 '01",
+      "slug": "nike-air-force-1-01-2026-facelit"
     },
     {
       "sub": "NBA",
