@@ -29,7 +29,7 @@
       "group": "Fashion",
       "title": "Nike a padlón: rég nem látott mélységekben",
       "slug": "nike-reszveny-eses",
-      "lead": "A sportszergigász részvénye olyan mélyre zuhant, amilyet legutóbb 2014 körül láttunk. Az \"Just do it\" mostanában inkább \"Just hold on\".",
+      "lead": "A sportszergigász részvénye olyan mélyre zuhant, amilyet legutóbb 2014 körül láttunk. A \"Just do it\" mostanában inkább \"Just hold on\".",
       "date": "2026-09-30",
       "imageCaption": ""
     },
@@ -179,35 +179,33 @@
       ]
     },
     {
-      "id": 5,
-      "group": "Zene",
       "sub": "NuMetal",
-      "title": "A nu metal reneszánsza: miért hallgatja újra a Z generáció?",
-      "lead": "Baggy nadrág, hétsávos gitárok, TikTok-trendek. Utánajártunk, honnan jön a hullám.",
-      "date": "2026-09-25",
       "image": "images/post-5.webp",
       "body": [
         {
           "type": "p",
-          "text": "Az elmúlt hetekben alig lehetett máshol olvasni erről a témáról, és nem véletlenül. A rajongók már hónapok óta találgattak, a zenekar pedig ügyesen adagolta az apró jeleket: egy-egy rejtélyes poszt, egy rövid stúdióvideó, néhány másodpercnyi hangminta."
-        },
-        {
-          "type": "p",
-          "text": "Az első benyomás egyértelmű: a hangzás egyszerre ismerős és friss. A gitárok vastagok és lehangoltak, a dobok pontosak, de a refrénben ott van az a dallam, ami elsőre is beragad a fülbe. Látszik, hogy a produceri munkára ezúttal sokkal több idő jutott."
+          "text": "Aki a 2000-es évek elején hallotta a bőnadrágos, láncos, üvöltős-rappelős zenét, azt hitte, a műfaj örökre a \"cringe\" kategóriában marad. Tévedett. A nu metal 2026-ban nagyobb, mint valaha: a legnagyobb fesztiválokon újra headlinerként tűnnek fel a műfaj nevei, a koncerteken pedig sorra telnek meg a stadionok.\n\nA Korn \"Freak On A Leash\" című száma például egy táncos trend révén futott be újra a platformon, így ezrek ismerkedtek meg vele, akik a megjelenésekor még meg sem születtek. A fiatalok a fesztiválokon úgy fogadják ezeket a bandákat, hogy közben szeretik és ironizálnak is vele. Ettől lesz az egész olyan szórakoztató.\n\n**De miért pont most?** Részben azért, mert a Z generáció egy tiszta, kendőzetlen hangzást keres a túlprodukált popvilág ellen. A nu metal nyers, őszinte, és nem szégyelli kimondani a szorongást, a dühöt vagy a kívülállást. Pont erre van igény egy olyan korban, amikor a pop shit zene nagyot megy, de ez nem mindenkinek tetszik. Hazánkban ez a trend nem annyira érezhető (talán itt már semmi se győzi le a jelenlegi popkultúrát), de Európában és világszerte jelen van.\n\n\n\n\n"
         },
         {
           "type": "quote",
-          "text": "A színpadon minden gyorsabb, hangosabb és kiszámíthatatlanabb lesz."
+          "text": "A legbeszédesebb példa a Limp Bizkit. Wes Borland gitáros szerint a zenekar akkora, mint még soha."
         },
         {
           "type": "p",
-          "text": "Koncerten ez a fajta anyag működik igazán. Aki látta már élőben a csapatot, tudja, hogy a stúdióverzió csak a kiindulópont: a színpadon minden gyorsabb, hangosabb és kiszámíthatatlanabb lesz."
+          "text": "És ezt maguk sem tudják elhinni..A TikTokot és a nosztalgiát is emlegeti magyarázatként. Szerinte az is számít, hogy a tagok mára felnőttek, remekül kijönnek egymással, és ez átsugárzik a színpadról is. Vagyis a banda, amelyik a nu metal születésének egyik kulcsbandája volt, most élete legjobb időszakát éli."
         },
         {
           "type": "p",
-          "text": "A megjelenés dátuma egyelőre nem végleges, de ha a korábbi menetrendet nézzük, az ősz végén jöhet a teljes anyag. Addig marad a repeat gomb, és persze a találgatás, hogy milyen dalok kerülnek még fel a lemezre."
+          "text": "**A Nu Metal műfaj képes örökre fennmaradni?**\nA nu metal reneszánsza azt mutatja, hogy a jó riff és az őszinte düh nem megy ki a divatból, legfeljebb néha pihen egy kicsit. Ha eddig kihagytad a bulit, itt az ideje bepótolni: dobd be a lejátszási listádra a Korn, Limp Bizkit, Linkin Park és a többiek legnagyobb slágereit, és kiderül, hogy a Z generációnak igaza van."
         }
-      ]
+      ],
+      "id": 5,
+      "group": "Zene",
+      "title": "A nu metal reneszánsza: miért hallgatja újra a Z generáció?",
+      "lead": "A zene, ami 2000-es évek elején letarolt mindent, ma újra teltházas stadionokat hoz lázba. A nu metal nem nosztalgiaműsor, hanem a Z generáció új kedvence.",
+      "date": "2026-09-25",
+      "imageCaption": "",
+      "slug": "nu-metal-reneszansza"
     },
     {
       "id": 6,
