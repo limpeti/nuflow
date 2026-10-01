@@ -45,10 +45,10 @@ button { font-family: inherit; }
       <div style="max-width: 1280px; margin: 0 auto; padding: 0 0 0 clamp(16px, 4vw, 40px); height: {{ mainH }}; display: flex; align-items: stretch; transition: height 0.2s ease;">
         <a href="#" onClick="{{ goHome }}" style="display: flex; align-items: center; gap: 12px; padding-right: 24px;" aria-label="NuFlow főoldal">
           <span style="display: flex; flex-direction: column; gap: 4px;">
-            <sc-if value="{{ logoOnLight }}" hint-placeholder-val="{{ true }}"><img data-logo-mark="true" src="assets/nuflow-logo-v2.png" alt="NuFlow" style="display: block; height: {{ logoH }}; width: auto; transition: height 0.2s ease;"></sc-if>
-            <sc-if value="{{ logoOnDark }}" hint-placeholder-val="{{ false }}"><img src="assets/nuflow-logo-v2-light.png" alt="NuFlow" style="display: block; height: {{ logoH }}; width: auto; transition: height 0.2s ease;"></sc-if>
+            <sc-if value="{{ logoOnLight }}" hint-placeholder-val="{{ true }}"><img data-logo-mark="true" src="assets/nuflow-logo-v3.png" alt="NuFlow" style="display: block; height: {{ logoH }}; width: auto; transition: height 0.2s ease;"></sc-if>
+            <sc-if value="{{ logoOnDark }}" hint-placeholder-val="{{ false }}"><img src="assets/nuflow-logo-v3-light.png" alt="NuFlow" style="display: block; height: 61px; width: 181px; transition: height 0.2s ease"></sc-if>
             <sc-if value="{{ showTagline }}" hint-placeholder-val="{{ true }}">
-              <div style="box-sizing: border-box; display: flex; flex-direction: column; gap: 12px"><span style="font-size: 10px; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; color: {{ barMuted }}; white-space: nowrap">New.Movement.Style.<br></span></div>
+              <div style="box-sizing: border-box; display: flex; flex-direction: column; gap: 12px"></div>
             </sc-if>
           </span>
         </a>
@@ -295,14 +295,13 @@ button { font-family: inherit; }
 
   <footer style="background: #000; color: #fff;">
     <div style="max-width: 1280px; margin: 0 auto; padding: 56px clamp(16px, 4vw, 40px) 32px; display: flex; flex-direction: column; gap: 40px;">
-      <div style="display: flex; justify-content: space-between; gap: 40px; flex-wrap: wrap;">
-        <div style="display: flex; flex-direction: column; gap: 16px; max-width: 380px;">
-          <div style="display: flex; align-items: center; gap: 10px;">
-            <img src="assets/nuflow-logo-v2-light.png" alt="NuFlow" style="display: block; height: 48px; width: auto;">
-          </div>
-          <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #cfcccc;">Minden amitől flowba jövünk – egy helyen, a mi hangunkon.</p>
+      <div style="display: grid; grid-template-columns: {{ footCols }}; gap: 40px; align-items: center;">
+      <sc-if value="{{ footSpacer }}" hint-placeholder-val="{{ true }}"><span></span></sc-if>
+      <div style="display: flex; flex-direction: column; align-items: center; gap: 14px; text-align: center;">
+        <img src="assets/nuflow-logo-v3-light.png" alt="NuFlow" style="display: block; height: 76px; width: auto;">
+        <p style="margin: 0; max-width: 380px; font-size: 15px; line-height: 1.55; color: #cfcccc;">Minden amitől flowba jövünk – egy helyen, a mi hangunkon.</p>
         </div>
-        <div style="display: flex; flex-direction: column; gap: 14px;">
+        <div style="display: flex; flex-direction: column; align-items: {{ footContactAlign }}; justify-self: {{ footContactSelf }}; gap: 14px;">
           <span style="font-size: 12px; font-weight: 800; letter-spacing: 0.1em; text-transform: uppercase; color: #9b9797;">Elérhetőség</span>
           <a href="mailto:hello@nuflow.hu" style="display: flex; align-items: center; gap: 12px; font-weight: 600; font-size: 16px; color: #fff;" style-hover="color: var(--color-accent-400);">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square"><rect x="2" y="4" width="20" height="16"></rect><path d="m22 7-10 6L2 7"></path></svg>
@@ -731,6 +730,7 @@ class Component extends DCLogic {
       topH: s.scrolled || s.topBar === 'Ki' ? '0px' : '36px',
       barBg: dark ? '#000' : '#fff', barFg: barInk, barMuted: dark ? 'var(--color-neutral-400)' : 'var(--color-neutral-700)',
       showStripe: s.stripeOn === 'Be',
+      footCols: isMobile ? 'minmax(0, 1fr)' : 'minmax(0, 1fr) auto minmax(0, 1fr)', footContactAlign: isMobile ? 'center' : 'flex-start', footContactSelf: isMobile ? 'center' : 'end', footSpacer: !isMobile,
       bScale: { Kicsi: 0.85, 'Közepes': 1, Nagy: 1.25 }[s.bSize],
       bRadius: { 'Szögletes': '0px', 'Lekerekített': '4px', Kapszula: '999px' }[s.bShape],
       spacerH: ((s.topBar === 'Ki' ? 0 : 36) + (isMobile ? 64 : 84) + s.ruleW + (s.stripeOn === 'Be' ? 4 : 0)) + 'px',
@@ -740,7 +740,7 @@ class Component extends DCLogic {
       mainH: s.scrolled || isMobile ? '64px' : '84px',
       markSize: s.scrolled || isMobile ? '36px' : '46px', markFont: s.scrolled || isMobile ? '22px' : '28px',
       wordSize: s.scrolled || isMobile ? '26px' : '34px', showTagline: !s.scrolled && !isMobile,
-      logoH: s.scrolled || isMobile ? '40px' : '52px',
+      logoH: s.scrolled || isMobile ? '46px' : '64px',
       logoOnLight: s.headerStyle !== 'Fekete', logoOnDark: s.headerStyle === 'Fekete',
       stripe: ['Zene', 'Sport', 'Fashion', 'Mix'].map(g => this.catColor(g)[0]),
       searchOpen: s.searchOpen, q: s.q, onQ: e => this.setState({ q: e.target.value }),
